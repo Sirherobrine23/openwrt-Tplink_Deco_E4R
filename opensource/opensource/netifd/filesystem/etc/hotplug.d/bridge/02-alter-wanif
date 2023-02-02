@@ -1,0 +1,88 @@
+#!/bin/sh
+
+
+vlan_enable=$(uci get network.vlan.enable)
+vlan_id=$(uci get network.vlan.id)
+device_id=$(getfirm DEV_ID)
+role=$(uci get bind_device_list."$device_id".role)
+internetif=$(uci get network.internet.ifname)
+#mode=$(grep 'RE' /tmp/work_mode)
+if [ "$vlan_enable" == "1" ]; then
+	[ "$role" == "AP" ] && {
+		[ "$ACTION" == "update" -a "$INTERFACE" == "lan" ]  && {
+			[ -n "$DEVICE" ] && {
+				[ "$DEVICE" == "eth1 " -a "$vlan_id" == "2" ] && {
+					uci set network_sync.wan.ifname="br-wan"
+                    [ -n "$internetif" ] && {
+                        uci set network_sync.internet.ifname="br-wan"
+                    }
+				} 
+                [ "$DEVICE" == "eth1 " -a "$vlan_id" == "1" ] && {
+					uci set network_sync.wan.ifname="br-wan.1"
+                    [ -n "$internetif" ] && {
+                        uci set network_sync.internet.ifname="br-wan.1"
+                    }
+				} 
+				[ "$DEVICE" == "eth0 " -a "$vlan_id" == "1" ] && {
+					uci set network_sync.wan.ifname="br-wan"
+                    [ -n "$internetif" ] && {
+                        uci set network_sync.internet.ifname="br-wan"
+                    }
+				} 
+                [ "$DEVICE" == "eth0 " -a "$vlan_id" == "2" ] && {
+					uci set network_sync.wan.ifname="br-wan.2"
+                    [ -n "$internetif" ] && {
+                        uci set network_sync.internet.ifname="br-wan.2"
+                    }
+				}
+			}
+		}
+
+        [ "$ACTION" == "prepare" -a "$INTERFACE" == "wan" ]  && {
+            [ -n "$DEVICE" ] && {
+                [ "$DEVICE" == "eth1" -a "$vlan_id" == "2" ] && {
+                    uci set network_sync.wan.ifname="br-wan.2"
+                    [ -n "$internetif" ] && {
+                        uci set network_sync.internet.ifname="br-wan.2"
+                    }
+                } 
+                [ "$DEVICE" == "eth1" -a "$vlan_id" == "1" ] && {
+                    uci set network_sync.wan.ifname="br-wan"
+                    [ -n "$internetif" ] && {
+                        uci set network_sync.internet.ifname="br-wan"
+                    }
+                } 
+                [ "$DEVICE" == "eth0" -a "$vlan_id" == "1" ] && {
+                    uci set network_sync.wan.ifname="br-wan.1"
+                    [ -n "$internetif" ] && {
+                        uci set network_sync.internet.ifname="br-wan.1"
+                    }
+                } 
+                [ "$DEVICE" == "eth0" -a "$vlan_id" == "2" ] && {
+                    uci set network_sync.wan.ifname="br-wan"
+                    [ -n "$internetif" ] && {
+                        uci set network_sync.internet.ifname="br-wan"
+                    }
+                }
+            }
+        }
+
+        [ "$ACTION" == "clear" -a "$INTERFACE" == "lan" ]  && {
+            wanif=$(uci get network.wan.ifname)
+            [ "$vlan_id" == "2" -a "$wanif" != "br-wan.2" ] && {
+                uci set network_sync.wan.ifname="br-wan.2"
+                [ -n "$internetif" ] && {
+                    uci set network_sync.internet.ifname="br-wan.2"
+                }
+            }
+            [ "$vlan_id" == "1" -a "$wanif" != "br-wan.1" ] && {
+                uci set network_sync.wan.ifname="br-wan.1"
+                [ -n "$internetif" ] && {
+                    uci set network_sync.internet.ifname="br-wan.1"
+                }
+            }
+        }
+        uci commit network_sync
+        /etc/init.d/network reload
+    }
+fi

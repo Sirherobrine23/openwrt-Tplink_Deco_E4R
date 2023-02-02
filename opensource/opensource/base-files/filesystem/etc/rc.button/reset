@@ -1,0 +1,19 @@
+#!/bin/sh
+
+wan_detect_mode="$(uci get wanDetect.settings.mode)"
+if [ "$wan_detect_mode" = "test1" ]; then
+	if [ "$ACTION" = "released" -a -f "/tmp/reset_pressed" ]; then
+		echo 1 > /tmp/button_reset_check
+	elif [ "$ACTION" = "pressed" ]; then
+		touch /tmp/reset_pressed
+	fi
+
+	[ -f "/tmp/g_wifi_not_cal" ] && exit 0
+fi
+
+[ -e /tmp/done_boot ] || exit 0
+
+if [ "$ACTION" = "pressed" ]; then
+    ubus call leds device '{"state":"resetting"}'
+    lua -l luci.model.app_cloudfirm -e 'luci.model.app_cloudfirm.config_factory()'
+fi

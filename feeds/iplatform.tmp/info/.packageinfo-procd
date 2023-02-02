@@ -1,0 +1,92 @@
+Source-Makefile: feeds/iplatform/procd/Makefile
+Package: procd
+Version: 2015-10-29.1-d5fddd91b966424bb63e943e789704d52382cc18
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +ubusd +ubus +libjson-script +ubox +USE_GLIBC:librt +libubox +libubus +NAND_SUPPORT:procd-nand
+Menu-Depends: 
+Provides: 
+Section: TP-LINK
+Category: TP-LINK iplatform apps
+Title: OpenWrt system process manager
+Maintainer: OpenWrt Developers Team <openwrt-devel@openwrt.org>
+Source: procd-2015-10-29.1-d5fddd91b966424bb63e943e789704d52382cc18.tar.gz
+Type: ipkg
+Description: OpenWrt system process manager
+OpenWrt Developers Team <openwrt-devel@openwrt.org>
+@@
+Config:
+menu "Configuration"
+	depends on PACKAGE_procd
+
+config PROCD_SHOW_BOOT
+	bool
+	default n
+	prompt "Print the shutdown to the console as well as logging it to syslog"
+
+config PROCD_ZRAM_TMPFS
+	bool
+	default n
+	prompt "Mount /tmp using zram."
+endmenu
+@@
+
+Package: procd-ujail
+Version: 2015-10-29.1-d5fddd91b966424bb63e943e789704d52382cc18
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread @KERNEL_NAMESPACES +@KERNEL_UTS_NS +@KERNEL_IPC_NS +@KERNEL_PID_NS +libubox +libblobmsg-json
+Menu-Depends: 
+Provides: 
+Section: TP-LINK
+Category: TP-LINK iplatform apps
+Title: OpenWrt process jail helper
+Maintainer: OpenWrt Developers Team <openwrt-devel@openwrt.org>
+Source: procd-2015-10-29.1-d5fddd91b966424bb63e943e789704d52382cc18.tar.gz
+Type: ipkg
+Description: OpenWrt process jail helper
+OpenWrt Developers Team <openwrt-devel@openwrt.org>
+@@
+
+Package: procd-seccomp
+Version: 2015-10-29.1-d5fddd91b966424bb63e943e789704d52382cc18
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread @arm||@armeb||@mips||@mipsel||@i386||@x86_64 @!TARGET_uml @KERNEL_SECCOMP +libubox +libblobmsg-json
+Menu-Depends: 
+Provides: 
+Section: TP-LINK
+Category: TP-LINK iplatform apps
+Title: OpenWrt process seccomp helper + utrace
+Maintainer: OpenWrt Developers Team <openwrt-devel@openwrt.org>
+Source: procd-2015-10-29.1-d5fddd91b966424bb63e943e789704d52382cc18.tar.gz
+Type: ipkg
+Description: OpenWrt process seccomp helper + utrace
+OpenWrt Developers Team <openwrt-devel@openwrt.org>
+@@
+
+Package: procd-nand
+Version: 2015-10-29.1-d5fddd91b966424bb63e943e789704d52382cc18
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread @NAND_SUPPORT +ubi-utils
+Menu-Depends: 
+Provides: 
+Section: TP-LINK
+Category: TP-LINK iplatform apps
+Title: OpenWrt sysupgrade nand helper
+Maintainer: OpenWrt Developers Team <openwrt-devel@openwrt.org>
+Source: procd-2015-10-29.1-d5fddd91b966424bb63e943e789704d52382cc18.tar.gz
+Type: ipkg
+Description: OpenWrt sysupgrade nand helper
+OpenWrt Developers Team <openwrt-devel@openwrt.org>
+@@
+
+Package: procd-nand-firstboot
+Version: 2015-10-29.1-d5fddd91b966424bb63e943e789704d52382cc18
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread procd-nand
+Menu-Depends: 
+Provides: 
+Section: TP-LINK
+Category: TP-LINK iplatform apps
+Title: OpenWrt firstboot nand helper
+Maintainer: OpenWrt Developers Team <openwrt-devel@openwrt.org>
+Source: procd-2015-10-29.1-d5fddd91b966424bb63e943e789704d52382cc18.tar.gz
+Type: ipkg
+Description: OpenWrt firstboot nand helper
+OpenWrt Developers Team <openwrt-devel@openwrt.org>
+@@
+
+

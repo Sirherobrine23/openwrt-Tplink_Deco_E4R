@@ -1,0 +1,12 @@
+prefix=/usr
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include
+
+Name: OpenSSL-libssl
+Description: Secure Sockets Layer and cryptography libraries
+Version: 1.0.2d
+Requires.private: libcrypto
+Libs: -L${libdir} -lssl
+Libs.private: -L/home/huangwenzhong/dakota/ipq4019/ipf/board/model_qca_ipq40xx/sdk/1.1CS/staging_dir/target-arm_cortex-a7_uClibc-0.9.33.2_eabi/usr/lib -L/home/huangwenzhong/dakota/ipq4019/ipf/board/model_qca_ipq40xx/sdk/1.1CS/staging_dir/target-arm_cortex-a7_uClibc-0.9.33.2_eabi/lib -Wl,-z,relro,-z,now -L/home/huangwenzhong/dakota/ipq4019/ipf/board/model_qca_ipq40xx/sdk/1.1CS/staging_dir/toolchain-arm_cortex-a7_gcc-4.8-linaro_uClibc-0.9.33.2_eabi/usr/lib -L/home/huangwenzhong/dakota/ipq4019/ipf/board/model_qca_ipq40xx/sdk/1.1CS/staging_dir/toolchain-arm_cortex-a7_gcc-4.8-linaro_uClibc-0.9.33.2_eabi/lib -ldl -ldl
+Cflags: -I${includedir} 

@@ -1,0 +1,200 @@
+#! /bin/sh
+
+local MAC_FILE=/tmp/getfirm-default-mac
+local MAC_TMP_FILE=/tmp/getfirm-tmp-mac
+local PIN_FILE=/tmp/getfirm-pin
+local PRODUCTINFO_FILE=/tmp/getfirm-product-info
+local DEVICEID_FILE=/tmp/getfirm-device-id
+local SOFTVERSION_FILE=/tmp/getfirm-soft-version
+
+. /lib/functions.sh
+
+usage()
+{
+	echo "getfirm <info>"
+	echo "        MAC"
+	echo "        SSID"
+	echo "        PIN"	
+	echo "        MODEL"
+	echo "        DEVICE_TYPE"
+	echo "        FIRM"
+	echo "        WEBSITE"
+	echo "        HARDVERSION"
+	echo "        SOFTVERSION"
+	echo "        LANGUAGE"
+	echo "        PRODUCT_ID"
+	echo "        SPECIAL_ID"
+	echo "        DEV_ID"
+	echo "        HW_ID"
+	echo "        FW_ID"
+	echo "        OEM_ID"
+	echo "        COUNTRY"
+    echo "        DEFAULT_GID"  	
+    echo "        DEFAULT_KEY"	
+}
+
+option="$1"
+factoryLanMac="00-0A-EB-13-7B-00"
+wan_detect_mode="$(uci get wanDetect.settings.mode)"
+if [ "$wan_detect_mode" = "test1" ]; then
+	if [ -f "$MAC_TMP_FILE" ];then
+		factoryLanMac=`cat "$MAC_TMP_FILE"`
+	else
+		hex_string1=`cat /dev/urandom | head -n 8 | md5sum | head -c 2`
+		hex_string2=`cat /dev/urandom | head -n 8 | md5sum | head -c 2`
+		hex_string3=`cat /dev/urandom | head -n 8 | md5sum | head -c 2`
+		factoryLanMac="00-14-78-""$hex_string1""-""$hex_string2""-""$hex_string3"
+		echo "$factoryLanMac" > "$MAC_TMP_FILE"
+	fi
+fi
+
+deviceType="HOMEWIFISYSTEM"
+
+case $option in
+    MAC)
+	if [ ! -s $MAC_FILE ]; then		
+		nvrammanager -r $MAC_FILE -p default-mac >/dev/null 2>&1
+	fi
+	if [ -s $MAC_FILE ];then
+		echo $(grep 'MAC' $MAC_FILE | cut -d : -f 2-)
+	else
+		echo  $factoryLanMac
+	fi
+    ;;
+	
+    SSID)
+    #echo  "TP-LINK"
+	config_load wifi
+	local ap_ssid
+	config_get ap_ssid ap ssid
+	echo $ap_ssid
+    ;;
+	
+    PIN)
+	if [ ! -s $PIN_FILE ]; then
+		nvrammanager -r $PIN_FILE -p pin >/dev/null 2>&1
+	fi
+	echo $(cat $PIN_FILE)
+    ;;
+
+	MODEL)
+	if [ ! -f $PRODUCTINFO_FILE ]; then
+		nvrammanager -r $PRODUCTINFO_FILE -p product-info > /dev/null 2>&1
+	fi
+	echo $(grep 'product_name' $PRODUCTINFO_FILE | cut -d : -f 2-)
+	;;
+	
+	DEVICE_TYPE)
+	if [ ! -f $PRODUCTINFO_FILE ]; then
+		nvrammanager -r $PRODUCTINFO_FILE -p product-info > /dev/null 2>&1
+	fi
+    grep 'product_type' /tmp/getfirm-product-info > /dev/null 2>&1 && 
+        echo $(grep 'product_type' $PRODUCTINFO_FILE | cut -d : -f 2-) || echo $deviceType    
+	;;
+	
+	FIRM)
+	if [ ! -f $PRODUCTINFO_FILE ]; then
+		nvrammanager -r $PRODUCTINFO_FILE -p product-info > /dev/null 2>&1
+	fi
+	echo $(grep 'vendor_name' $PRODUCTINFO_FILE | cut -d : -f 2-)
+	;;
+	
+	WEBSITE)
+	if [ ! -f $PRODUCTINFO_FILE ]; then
+		nvrammanager -r $PRODUCTINFO_FILE -p product-info > /dev/null 2>&1
+	fi
+	echo $(grep 'vendor_url' $PRODUCTINFO_FILE | cut -d : -f 2-)
+	;;
+	
+	HARDVERSION)
+	if [ ! -f $PRODUCTINFO_FILE ]; then
+		nvrammanager -r $PRODUCTINFO_FILE -p product-info > /dev/null 2>&1
+	fi
+	echo $(grep 'product_ver' $PRODUCTINFO_FILE | cut -d : -f 2- | cut -d . -f 1-2)
+	;;
+
+	LANGUAGE) 
+	if [ ! -f $PRODUCTINFO_FILE ]; then
+		nvrammanager -r $PRODUCTINFO_FILE -p product-info > /dev/null 2>&1
+	fi
+	echo $(grep 'language' $PRODUCTINFO_FILE | cut -d : -f 2-)
+	;;
+	
+	PRODUCT_ID)
+	if [ ! -f $PRODUCTINFO_FILE ]; then
+		nvrammanager -r $PRODUCTINFO_FILE -p product-info > /dev/null 2>&1
+	fi
+	echo $(grep 'product_id' $PRODUCTINFO_FILE | cut -d : -f 2-)
+	;;
+	
+	SPECIAL_ID)
+	if [ ! -f $PRODUCTINFO_FILE ]; then
+		nvrammanager -r $PRODUCTINFO_FILE -p product-info > /dev/null 2>&1
+	fi
+	echo $(grep 'special_id' $PRODUCTINFO_FILE | cut -d : -f 2-)
+	;;
+
+	DEV_ID)
+	if [ ! -s $DEVICEID_FILE ]; then
+		nvrammanager -r $DEVICEID_FILE -p device-id > /dev/null 2>&1
+	fi
+	echo $(grep 'dev_id' $DEVICEID_FILE | cut -d : -f 2-)
+	;;
+
+	HW_ID)
+	if [ ! -f $PRODUCTINFO_FILE ]; then
+		nvrammanager -r $PRODUCTINFO_FILE -p product-info > /dev/null 2>&1
+	fi
+	echo $(grep 'hw_id' $PRODUCTINFO_FILE | cut -d : -f 2-)
+	;;
+
+	SOFTVERSION)
+	if [ ! -f $SOFTVERSION_FILE ]; then
+		nvrammanager -r $SOFTVERSION_FILE -p soft-version > /dev/null 2>&1
+	fi
+	echo $(grep 'soft_ver' $SOFTVERSION_FILE | cut -d : -f 2-)
+	;;
+
+	FW_ID)
+	if [ ! -f $SOFTVERSION_FILE ]; then
+		nvrammanager -r $SOFTVERSION_FILE -p soft-version > /dev/null 2>&1
+	fi
+	echo $(grep 'fw_id' $SOFTVERSION_FILE | cut -d : -f 2-)
+	;;
+ 
+ 	OEM_ID)
+	if [ ! -f $PRODUCTINFO_FILE ]; then
+		nvrammanager -r $PRODUCTINFO_FILE -p product-info > /dev/null 2>&1
+	fi
+	echo $(grep 'oem_id' $PRODUCTINFO_FILE | cut -d : -f 2-)
+	;;
+	
+	COUNTRY)
+	if [ ! -f $PRODUCTINFO_FILE ]; then
+		nvrammanager -r $PRODUCTINFO_FILE -p product-info > /dev/null 2>&1
+	fi
+	echo $(grep 'country' $PRODUCTINFO_FILE | cut -d : -f 2-)
+	;;
+	
+    DEFAULT_GID)
+    if [ ! -f $PRODUCTINFO_FILE ]; then
+        nvrammanager -r $PRODUCTINFO_FILE -p product-info > /dev/null 2>&1
+    fi
+    echo $(grep 'gid' $PRODUCTINFO_FILE | cut -d : -f 2-)
+    ;;	
+	
+    DEFAULT_KEY)
+    if [ ! -f $PRODUCTINFO_FILE ]; then
+        nvrammanager -r $PRODUCTINFO_FILE -p product-info > /dev/null 2>&1
+    fi
+    echo $(grep 'key' $PRODUCTINFO_FILE | cut -d : -f 2-)
+    ;;  
+    
+	refresh)
+	rm /tmp/getfirm-*
+	;;
+	
+    *)
+    usage
+    ;;
+esac

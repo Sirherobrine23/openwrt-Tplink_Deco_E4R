@@ -1,0 +1,93 @@
+#!/bin/sh
+iface_file="/var/miniupnpd_ext_iface"
+. /lib/functions.sh
+. /lib/functions/network.sh
+
+if [ ! -f "/tmp/upnpLog" ]; then
+	echo start > /tmp/upnpLog
+fi
+
+size=`sed -n '$=' /tmp/upnpLog`
+if [ $size -le 200 ]; then
+	echo $ACTION >> /tmp/upnpLog
+	echo $INTERFACE >> /tmp/upnpLog
+fi
+
+/etc/init.d/miniupnpd enabled && [ "$ACTION" = "ifup" ] && {
+	#initial launch of miniupnpd now that interfaces are up
+	local wanif
+	local lanif
+	local old_ifname
+	wanif=$(uci_get upnpd config external_iface)
+	wantype=$(uci_get network_sync wan wan_type)
+	lanif=$(uci_get upnpd config internal_iface)
+	old_ifname=$(cat ${iface_file})
+    local iface_wan="wan"
+    local iface_internet="internet"
+    local wan_addr=""
+    local internet_addr=""
+
+    ubus list | grep -q network.interface.wan && network_get_ipaddr wan_addr "$iface_wan"
+    ubus list | grep -q network.interface.internet && network_get_ipaddr internet_addr "$iface_internet"
+
+    # wan interface up is invalid for pppoe dial type
+    if [ "$INTERFACE" == "wan" -a "$wantype" == "pppoe" ]; then
+        exit 0;
+    fi
+
+    # internet up will ignore wan up action
+    if [ -n "$internet_addr" ] && [ "$INTERFACE" == "wan" ] ; then
+        exit 0;
+    fi
+
+    if [ "$INTERFACE" != "$wanif" ] && [ "$INTERFACE" == "wan" -o "$INTERFACE" == "internet" ]; then
+        uci set upnpd.config.external_iface="$INTERFACE"
+        uci commit upnpd
+    fi
+
+    if [ "$INTERFACE" == "wan" -o "$INTERFACE" == "internet" ]; then
+        local ifname
+        network_get_device ifname $INTERFACE
+        echo $ifname > $iface_file
+    fi
+    
+	for iface in $(uci_get upnpd config internal_iface; uci_get upnpd config external_iface) mobile; do
+		[ "$INTERFACE" = "$iface" ] && /etc/init.d/miniupnpd restart
+	done
+
+	for iface in $(uci_get upnpd config internal_iface); do
+		[ "$INTERFACE" = "$iface" ] && exit 0
+	done
+
+    if [ "$INTERFACE" != "wan" -a "$INTERFACE" != "internet" ]; then
+        exit 0
+    fi
+
+# add upnp loopback function when data destination is own wan address, it should loopback using MINIUPNPD filter rule    
+    local lock_upnp="/var/run/upnp_config.lock"
+    lock $lock_upnp
+    trap "" INT TERM ABRT QUIT ALRM
+
+    local nat_index=$(iptables -w -t nat -nL zone_lan_prerouting --line-number | grep MINIUPNPD | awk -F ' ' '{print $1}')
+    local filter_index=$(iptables -w -t filter -nL zone_lan_forward --line-number | grep MINIUPNPD | awk -F ' ' '{print $1}')
+    local iface="$INTERFACE"
+
+    #only handle the first wan address
+    for ip in $internet_addr $wan_addr; do
+        if [ -n "$ip" ] ; then
+            if [ -n "$nat_index" ] ; then
+                iptables -w -t nat -R zone_lan_prerouting ${nat_index} -j MINIUPNPD -d ${ip}
+            else
+                iptables -w -t nat -I zone_lan_prerouting -j MINIUPNPD -d ${ip}
+            fi
+            if [ -n "$filter_index" ] ; then
+                iptables -w -t filter -R zone_lan_forward ${filter_index} -j MINIUPNPD -d ${ip}
+            else
+                iptables -w -t filter -I zone_lan_forward -j MINIUPNPD -d ${ip}
+            fi
+            break
+        fi
+    done
+    trap - INT TERM ABRT QUIT ALRM
+    lock -u $lock_upnp
+}

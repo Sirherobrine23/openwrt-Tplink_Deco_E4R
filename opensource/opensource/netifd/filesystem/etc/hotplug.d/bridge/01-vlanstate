@@ -1,0 +1,176 @@
+#!/bin/sh
+
+. /lib/functions.sh
+. /lib/guest-eth/guest-eth.sh
+
+delete_lan_device() {
+    sec_name="$1"
+	config_get name "$1" name
+	if [ "$name" == "eth0.4094" -o "$name" == "eth1.4094" ];then
+		uci delete network."$sec_name"
+		[ "$name" == "eth0.4094" ] && {
+			ifconfig eth0.4094 down
+		} || {
+			ifconfig eth1.4094 down
+		}
+	fi
+}
+
+vlan_enable=$(uci get network.vlan.enable)
+vlan_id=$(uci get network.vlan.id)
+device_id=$(getfirm DEV_ID)
+role=$(uci get bind_device_list."$device_id".role)
+record_vlan="/var/run/last_vlan_enable"
+#mode=$(grep 'RE' /tmp/work_mode)
+
+guest_vlan_enable=$(uci get wifi.guest.vlan_enable)
+guest_vlan_id=$(uci get wifi.guest.vlan_id)
+
+config_load sysmode
+config_get system_mode sysmode mode "Router"
+
+local lock_vlan="/var/run/vlan.lock"
+trap "" INT TERM ABRT QUIT ALRM KILL
+lock $lock_vlan
+
+local is_change=0
+if [ "$vlan_enable" == "1" ]; then
+	[  "$role" == "AP" ] && {
+		[ "$ACTION" == "update" -a "$INTERFACE" == "lan" ]  && {
+			[ -n "$DEVICE" ] && {
+				
+				[ "$DEVICE" == "eth0 " ] && {
+					uci -c /etc/vlan.d set vlan.@switch_vlan[0].vid=$vlan_id
+					uci -c /etc/vlan.d set vlan.@switch_vlan[0].ports="0t 1 2 3 4t"
+					if [ "$vlan_id" == "2" ]; then
+						uci -c /etc/vlan.d set vlan.@switch_vlan[1].vid="4094"
+						sec="$(uci add network device)"
+						uci set network."$sec".enabled="1"
+    					uci set network."$sec".name="eth0.4094"
+						uci set network.lan.ifname="eth0.4094"
+						uci commit network
+						ubus call network reload
+					else 
+						uci -c /etc/vlan.d set vlan.@switch_vlan[1].vid="2"
+					fi
+					uci -c /etc/vlan.d set vlan.@switch_vlan[1].ports="0t 5"
+                    is_change=1
+				} || {
+					if [ "$vlan_id" == "1" ]; then
+						uci -c /etc/vlan.d set vlan.@switch_vlan[0].vid="4094"
+						sec="$(uci add network device)"
+						uci set network."$sec".enabled="1"
+    					uci set network."$sec".name="eth1.4094"
+						uci set network.lan.ifname="eth1.4094"
+						uci commit network
+						ubus call network reload
+					else 
+						uci -c /etc/vlan.d set vlan.@switch_vlan[0].vid="1"
+					fi
+					uci -c /etc/vlan.d set vlan.@switch_vlan[0].ports="0t 1 2 3 4"
+					uci -c /etc/vlan.d set vlan.@switch_vlan[1].vid=$vlan_id
+					uci -c /etc/vlan.d set vlan.@switch_vlan[1].ports="0t 5t"
+                    is_change=1
+				}
+			}
+		}
+
+		[ "$ACTION" == "clear" -a "$INTERFACE" == "lan" ]  && {
+			lan_ifname=$(uci get network.lan.ifname)
+			[ "$lan_ifname" != "eth0 eth1" ] && {
+				config_load network
+				config_foreach delete_lan_device device
+				uci set network.lan.ifname="eth0 eth1"
+				uci commit network
+				ubus call network reload
+			}
+			uci -c /etc/vlan.d set vlan.@switch_vlan[0].vid="1"
+			uci -c /etc/vlan.d set vlan.@switch_vlan[0].ports="0t 1 2 3 4"
+			uci -c /etc/vlan.d set vlan.@switch_vlan[1].vid=$vlan_id
+			uci -c /etc/vlan.d set vlan.@switch_vlan[1].ports="0t 4t 5t"
+            is_change=1
+
+		}
+
+	}
+else
+    last_vlan_status=$(cat $record_vlan)
+    if [[ "$last_vlan_status" == "1" ]]; then
+        uci -c /etc/vlan.d set vlan.@switch_vlan[0].ports="0t 1 2 3 4"
+        uci -c /etc/vlan.d set vlan.@switch_vlan[0].vid="1"
+        uci -c /etc/vlan.d set vlan.@switch_vlan[1].ports="0t 5"
+        uci -c /etc/vlan.d set vlan.@switch_vlan[1].vid="2"
+        is_change=1
+    fi
+fi
+
+if [ "$guest_vlan_enable" == "1" ]; then
+	[  "$role" == "AP" ] && {
+
+        local section_name
+        section_name=$(uci -c /etc/vlan.d get vlan.@switch_vlan[2])
+        local switch_device=$(uci -c /etc/vlan.d get vlan.@switch[0].name)
+
+
+        [ "$ACTION" == "update" -a "$INTERFACE" == "lan" ]  && {
+            [ -n "$DEVICE" ] && {
+                
+                [ "$DEVICE" == "eth0 " ] && {
+                    echo "update eth0 port guest vlan_id br-lan" > /dev/console
+
+                    if [ "$section_name" != "switch_vlan" ]; then
+                        uci -c /etc/vlan.d add vlan switch_vlan
+                        uci -c /etc/vlan.d set vlan.@switch_vlan[2].device="$switch_device"
+                        uci -c /etc/vlan.d set vlan.@switch_vlan[2].vlan="3"
+                    fi
+
+                    uci -c /etc/vlan.d set vlan.@switch_vlan[2].vid="$guest_vlan_id"
+                    uci -c /etc/vlan.d set vlan.@switch_vlan[2].ports="0t 5t"
+                    is_change=1
+                    
+                    del_invalid_guest_eth "lan" "eth0"
+                    if [[ "$system_mode" != "AP" ]]; then
+                        add_eth_guest "eth0"
+                    fi
+
+                } || {
+                    echo "update eth1 port guest vlan_id br-lan" > /dev/console
+                    if [ "$section_name" != "switch_vlan" ]; then
+                        uci -c /etc/vlan.d add vlan switch_vlan
+                        uci -c /etc/vlan.d set vlan.@switch_vlan[2].device="$switch_device"
+                        uci -c /etc/vlan.d set vlan.@switch_vlan[2].vlan="3"
+                    fi
+
+                    uci -c /etc/vlan.d set vlan.@switch_vlan[2].vid="$guest_vlan_id"
+                    uci -c /etc/vlan.d set vlan.@switch_vlan[2].ports="0t 1 2 3 4t"
+                    is_change=1
+
+                    del_invalid_guest_eth "lan" "eth1"
+                    if [[ "$system_mode" != "AP" ]]; then
+                        add_eth_guest "eth1"
+                    fi
+                    
+                }
+
+            }
+        }
+
+        [ "$ACTION" == "clear" -a "$INTERFACE" == "lan" ]  && {
+            echo "clear lan guest vlan id" > /dev/console
+            uci -c /etc/vlan.d delete vlan.@switch_vlan[2]
+            is_change=1
+            del_invalid_guest_eth "lan" "none"
+
+        }
+    }
+fi
+
+if [ "$is_change" == 1 ]; then
+    uci commit -c /etc/vlan.d
+    switch_name=$(uci -c /etc/vlan.d get vlan.@switch[0].name)
+    echo "hotplug config vlan ==============" > /dev/console 
+    #swconfig dev $switch_name load /etc/vlan.d/vlan
+fi
+
+echo -n "$vlan_enable" > "$record_vlan"
+lock -u $lock_vlan

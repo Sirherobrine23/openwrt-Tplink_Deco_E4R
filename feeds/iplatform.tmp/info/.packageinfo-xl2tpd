@@ -1,0 +1,20 @@
+Source-Makefile: feeds/iplatform/xl2tpd/Makefile
+Package: xl2tpd
+Submenu: Network
+Version: 1.1.12-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread pppd +kmod-pppol2tp +kmod-ppp +ip +resolveip
+Menu-Depends: 
+Provides: 
+Section: TP-LINK
+Category: TP-LINK iplatform apps
+Title: An L2TP (Layer 2 Tunneling Protocol) daemon
+Maintainer: OpenWrt Developers Team <openwrt-devel@openwrt.org>
+Source: 
+Type: ipkg
+Description: l2tpd is the open source implementation of the L2TP tunneling protocol (RFC2661).
+It does implement both LAC and LNS role in a L2TP networking architecture. The
+main goal of this protocol is to tunnel PPP frame trough an IP network.
+OpenWrt Developers Team <openwrt-devel@openwrt.org>
+@@
+
+

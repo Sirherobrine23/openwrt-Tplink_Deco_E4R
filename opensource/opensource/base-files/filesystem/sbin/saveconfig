@@ -1,0 +1,19 @@
+#!/usr/bin/lua
+
+local config = require "luci.sys.config"
+local param = nil
+local part = arg[1]
+
+if part == "a" or part == "all" then
+    param = nil
+elseif part == "u" or part == "user-config" then
+    param = "user-config"
+else
+    param = "device-config"
+end
+
+if param ~= "device-config" then
+    print("Warning: saving user-config is for debug only")
+end
+
+config.saveconfig(param)

@@ -1,0 +1,9 @@
+CMakeCache.txt
+CMakeFiles
+*.cmake
+*.a
+*.so
+*.dylib
+install_manifest.txt
+jshn
+*-example

@@ -1,0 +1,37 @@
+Source-Makefile: feeds/iplatform/dropbear/Makefile
+Package: dropbear
+Version: 2015.67-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libuci
+Menu-Depends: 
+Provides: 
+Section: TP-LINK
+Category: TP-LINK iplatform apps
+Title: Small SSH2 client/server
+Maintainer: OpenWrt Developers Team <openwrt-devel@openwrt.org>
+Source: dropbear-2015.67.tar.bz2
+Type: ipkg
+Description:  A small SSH2 server/client designed for small memory environments.
+http://matt.ucc.asn.au/dropbear/
+OpenWrt Developers Team <openwrt-devel@openwrt.org>
+@@
+Config:
+	source "opensource/opensource/dropbear/Config.in"
+@@
+
+Package: dropbearconvert
+Version: 2015.67-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libuci
+Menu-Depends: 
+Provides: 
+Section: TP-LINK
+Category: TP-LINK iplatform apps
+Title: Utility for converting SSH keys
+Maintainer: OpenWrt Developers Team <openwrt-devel@openwrt.org>
+Source: dropbear-2015.67.tar.bz2
+Type: ipkg
+Description: Utility for converting SSH keys
+http://matt.ucc.asn.au/dropbear/
+OpenWrt Developers Team <openwrt-devel@openwrt.org>
+@@
+
+

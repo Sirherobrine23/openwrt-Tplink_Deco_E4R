@@ -1,0 +1,14 @@
+#!/bin/sh
+
+dynamic_passwd() {
+	local digital_string
+	local hex_string=`cat /dev/urandom | head -n 8 | md5sum | head -c 8`
+	digital_string=`echo $hex_string | tr 'a-f' ''0-5`
+	echo $digital_string
+}
+
+local dynpasswd=""
+if [ "$1" == "guest" ]; then
+	dynpasswd=$(dynamic_passwd)
+	echo $dynpasswd
+fi

@@ -1,0 +1,74 @@
+#!/bin/sh /etc/rc.common
+
+START=20
+STOP=90
+
+USE_PROCD=1
+
+init_switch() {
+	setup_switch() { return 0; }
+
+	include /lib/network
+	setup_switch
+}
+
+start_service() {
+	init_switch
+}
+
+reload_service() {
+	include /lib/network
+
+    if [ "$1" == "set" ]; then
+        set_wan_vlan
+    elif [ "$1" == "reset" ]; then
+        reset_wan_vlan
+    else
+        init_switch
+    fi
+}
+
+stop_service() {
+	return
+}
+
+service_running() {
+	return
+}
+
+
+validate_switch_section()
+{
+	uci_validate_section network switch "${1}" \
+		'name:string' \
+		'enable:bool' \
+		'enable_vlan:bool' \
+		'reset:bool'
+
+	return $?
+}
+
+validate_switch_vlan()
+{
+	uci_validate_section network switch_vlan "${1}" \
+		'device:string' \
+		'vlan:uinteger' \
+		'ports:list(ports)'
+
+	return $?
+}
+
+
+restart() {
+	ifdown -a
+	sleep 1
+	trap '' TERM
+	stop "$@"
+	start "$@"
+}
+
+shutdown() {
+	ifdown -a
+	sleep 1
+	stop
+}

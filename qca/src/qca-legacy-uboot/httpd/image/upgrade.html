@@ -1,0 +1,262 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Firmware upgrade</title>
+    <style>
+	h1,
+	p,
+	form,
+	ul {
+		margin: 0;
+		padding: 0;
+	}
+
+	html,
+	body {
+		font: 12px Arial, Verdana, Arial;
+		background: #4acbd6;
+	}
+
+	#m {
+		max-width: 750px;
+		margin: 30px auto 10px;
+		border: solid 1px #CCCCCC;
+		background: #FFF;
+		border-radius: 7px;
+		box-shadow: 0 0 10px #D2D1D1;
+	}
+
+	#m > * {
+		padding: 20px;
+	}
+
+	h1 {
+		font: 12px Arial, Verdana, Arial;
+		border-bottom: solid 2px #4acbd6;
+	}
+
+	a,
+	h1 {
+		/*color: #2450AD;*/
+		/*text-decoration: none;*/
+	}
+
+	.i {
+		margin: 20px;
+		border-radius: 7px;
+		text-align: justify;
+	}
+
+	.w {
+		border: solid 1px #CCCCCC;
+	}
+
+	.e {
+		border:solid 1px #C11C66;
+	}
+
+	#f {
+		text-align: center;
+		color: #969393;
+	}
+
+	form,
+	p,
+	h1 {
+		text-align: left;
+	}
+
+	ul {
+		list-style: square;
+		margin: 0 0 0 20px;
+	}
+
+	.red {
+		color: #C11C66;
+	}
+
+	.i strong {
+		margin: 0 0 5px;
+		display: block;
+	}
+
+    #m,
+    #hidden-get {
+        display: none;
+    }
+    .progress-bar-ctn {
+        position: relative;
+    }
+    .progress-bar-outer {
+        display: inline-block;
+        width: 400px;
+        height: 10px;
+        background-color: #e6e6e6;
+    }
+    .progress-bar-inner {
+        display: inline-block;
+        height: 10px;
+        background-color: #4ACBD6;
+        position: absolute;
+    }
+    .progress-bar-rate {}
+    </style>
+</head>
+
+<body>
+    <div id="m">
+        <h1>Firmware Upgrade</h1>
+        <p>Choose the firmware file from your local disk and click Upgrade.</p>
+        <iframe id="invisible-iframe" name="invisible-iframe" style="display: none"></iframe>
+        <form method="get" id="hidden-get" action="success.html"></form>
+        <form method="post" target="invisible-iframe" onsubmit="upload()" enctype="multipart/form-data" action="testurl">
+            <input id="submit-file" type="file" name="firmware">
+            <input id="submit-btn" type="submit" value="Upgrade">
+        </form>
+        <div id="progress-bar-ctn" class="progress-bar-ctn">
+            <div id="progress-bar-outer" class="progress-bar-outer">
+                <div id="progress-bar-inner" class="progress-bar-inner"></div>
+            </div>
+            <span id="progress-bar-rate" class="progress-bar-rate">0</span>%
+        </div>
+        <div class="i w">
+            <strong>Tips:</strong>
+            <ul>
+                <li>Do NOT power off your Decos during the upgrade.</li>
+                <li>Make sure the firmware file you choose is correct.</li>
+            </ul>
+        </div>
+    </div>
+</body>
+<script>
+var updateTimer;
+var updateId = false;
+
+function progressStart(options) {
+    options = options || {};
+    var updateInterval = options.updateInterval || 1000;
+    var rate = options.rate !== undefined ? options.rate : parseInt(document.getElementById("progress-bar-rate").innerHTML);
+    document.getElementById("progress-bar-rate").innerHTML = rate;
+    clearTimeout(updateTimer);
+    updateTimer = setTimeout(function() {
+        var rateNew = rate + 1;
+        rateNew = rateNew > 100 ? 100 : rateNew;
+
+        var widthOuter = document.getElementById("progress-bar-outer").offsetWidth;
+        var widthInner = rateNew / 100 * widthOuter;
+        document.getElementById("progress-bar-inner").style.width = widthInner + "px";
+        document.getElementById("progress-bar-rate").innerHTML = rateNew
+        options.rate = rateNew;
+        if (rateNew >= 100) {
+            /*if (options.finish) {
+                options.finish.call();
+            }*/
+	    //update success
+	    document.getElementById("m").innerHTML="<h1>Successful Upgrade</h1><p>Your Decos have been successfully upgraded.<br>Please wait for Decos to reboot and close this webpage.</p>";
+        } else {
+            progressStart(options);
+        }
+    }, updateInterval);
+
+}
+
+function mystop(){
+	if (!!(window.attachEvent && !window.opera)){
+            document.execCommand("stop");
+        }
+        else{
+            window.stop();
+        }
+}
+
+function closeSearch(){
+        var xmlhttp;
+        if (window.XMLHttpRequest) {
+            xmlhttp = new XMLHttpRequest();
+        }
+        else {
+            xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+        }
+        xmlhttp.abort();
+        mystop();
+}
+
+function upload(options) {
+    if(updateId){
+	clearInterval(updateId);
+	updateId = false;
+    }
+
+    progressStart({
+        rate: 0,
+        updateInterval: 1200
+    });
+
+    updateId = setInterval(function(){
+	var cur = parseInt(document.getElementById("progress-bar-rate").innerHTML);
+	if(cur >= 40)
+	{
+		clearInterval(updateId);
+		document.getElementById("m").innerHTML="<h1 class=\"red\">Upgrade Failed</h1><p>Failed to upgrade your Decos.<br>You might have chosen a wrong file. Please enter 192.168.0.1 in the address bar and try again.</p>";
+		closeSearch();
+	}
+    }, 1200);
+    
+}
+
+function uploadDone() {
+    clearInterval(updateId);
+    updateId = false;
+    var doc;
+    try{
+	doc = document.getElementById("invisible-iframe").contentDocument.body.textContent || document.getElementById("invisible-iframe").contentDocument.body.innerHTML;
+    }
+    catch(error){
+	document.getElementById("m").innerHTML="<h1 class=\"red\">Upgrade Failed</h1><p>Failed to upgrade your Decos.<br>You might have chosen a wrong file. Please enter 192.168.0.1 in the address bar and try again.</p>";	
+	return;
+    };
+
+    var data = !doc ? "" : JSON.parse(doc);
+    if(typeof(data) == "object" && data.success){
+	//upload success	
+    }
+    else
+    {
+	document.getElementById("m").innerHTML="<h1 class=\"red\">Upgrade Failed</h1><p>Failed to upgrade your Decos.<br>You might have chosen a wrong file. Please enter 192.168.0.1 in the address bar and try again.</p>";	
+	return false;
+    }
+
+    /*
+    progressStart({
+        updateInterval: 1,
+        finish: function() {
+            document.getElementById("hidden-get").submit();
+        }
+    });*/
+    progressStart({
+        updateInterval: 1200
+    });
+}
+
+window.onload = function() {
+    document.getElementById("m").style.display = "block";
+    var iframe = document.getElementById("invisible-iframe");
+    if (iframe.addEventListener) {
+		iframe.addEventListener("load", function() {
+    		uploadDone();
+		});
+    } else if (iframe.attachEvent) {
+        iframe.attachEvent("onload", function() {
+            uploadDone();
+        });
+    } else  {
+    	iframe.onload = function() {
+	    	uploadDone();
+	    };
+    }
+}
+</script>
+
+</html>

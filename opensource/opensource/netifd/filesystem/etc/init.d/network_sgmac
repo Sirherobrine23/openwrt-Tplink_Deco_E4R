@@ -1,0 +1,770 @@
+#!/bin/sh /etc/rc.common
+#add procd support by wanghao
+#sync configs from network_sync when procd reload service.
+
+START=25
+STOP=90
+
+USE_PROCD=1
+
+NETWORK_MOD_ID=290
+LOGX_ID_NETIFD_START=200
+LOGX_ID_NETIFD_STOP=201
+
+. /lib/functions.sh
+
+delete_vlan_device() {
+	local sec_name="$1"
+	local id=""
+	id="$(uci get network.vlan.id)"
+	config_get name "$1" name
+	#echo "delete_vlan_device:start to delete eth0.$id" > /dev/console
+	if [ "$name" == "eth0.""$id" -a "$id" != "1" -a "$id" != 2 ];then
+		echo "delete_vlan_device:deleted eth0.$id" > /dev/console
+		uci delete network."$sec_name"
+	fi
+}
+
+ifname_sync()
+{
+
+	echo "br-wan"
+	return
+}
+
+backup_protocol()
+{
+	local uci_r="uci -c /tmp/state"
+	cp /etc/config/protocol /tmp/state
+	$uci_r set protocol.dhcp.ifname="br-wan"
+	$uci_r set protocol.pppoe.ifname="br-wan"
+	$uci_r set protocol.static.ifname="br-wan"
+	$uci_r set protocol.passthrough.ifname="br-wan"
+	$uci_r set protocol.pppoev6.ifname="br-wan"
+	$uci_r set protocol.dhcpv6.ifname="br-wan"
+	$uci_r set protocol.6to4.ifname="br-wan"
+	$uci_r commit protocol
+}
+
+load_config() {
+#copy some configs from network_sync to network
+	local wan_type=""
+	local network_wan_type=""
+	local data=""
+	local mode=""
+	local vlan_status=""
+	local macaddr=""
+	wan_type="$(uci get network_sync.wan.wan_type)"
+	network_wan_type="$(uci get network.wan.wan_type)"
+	#store wan mac address
+	macaddr="$(uci get network.wan.macaddr)"
+	
+	# backup protocol to /tmp/state
+	backup_protocol
+
+#if device eth0.x existed in network_sync, then update it in network
+	config_load network
+	data="$(uci get network_sync.vlan.enable)"
+	id="$(uci get network_sync.vlan.id)"
+	#echo "load_config:start to add eth0.$id" > /dev/console
+	config_foreach delete_vlan_device device
+	if [ "$data" == "1" -a "$id" != 1 -a "$id" != 2 ];then
+		local sec=""
+		sec="$(uci add network device)"
+		uci set network."$sec".enabled="1"
+		data="$(uci get network_sync.vlan.id)"
+		uci set network."$sec".name="eth0.${data}"
+		echo "load_config:added eth0.$id" > /dev/console
+#		uci set network."$sec".macaddr="$macaddr"
+	fi
+
+#if role == FAP and device br-wan.x not existed in network, then add it
+	#mode=$(grep 'RE' /tmp/work_mode)
+#	device_id=$(getfirm DEV_ID)
+#	role=$(uci get bind_device_list."$device_id".role)
+#	vlan_status=$(uci get network.vlan.enable)
+#	if [ "$role" == "AP" ]; then
+#		[ "$vlan_status" == "1" ] && {
+#			config_load network
+#			local id=""
+#			id="$(uci get network_sync.vlan.id)"
+#			config_foreach delete_br_wan_device device
+#			local sec=""
+#			sec="$(uci add network device)"
+#			uci set network."$sec".enabled="1"
+#			uci set network."$sec".name="br-wan.""$id"
+#			uci set network."$sec".macaddr="$macaddr"
+#		}
+#	fi
+
+#copy vlan info from network_sync to network  --add by linxijin
+	data="$(uci get network_sync.vlan.enable)"
+	uci set network.vlan.enable="$data"
+
+	data="$(uci get network_sync.vlan.isp_name)"
+	uci set network.vlan.isp_name="$data"
+
+	data="$(uci get network_sync.vlan.id)"
+	uci set network.vlan.id="$data"
+
+#if vlan.enable=0 and wan.ifname != "br-wan", then reset it to "br-wan"! It happen in change sysmode.
+#vlan_status=$(uci get network_sync.vlan.enable)
+#wanif=$(uci get network_sync.wan.ifname)
+#[ "$vlan_status" == "0" -a "$wanif" != "br-wan" ] && {
+#	uci set network_sync.wan.ifname="br-wan"
+#	uci commit
+#}
+	sysmode=$(uci get sysmode.sysmode.mode)
+	vlan_enable=$(uci get network.vlan.enable)
+	vid=$(uci get network.vlan.id)
+	# if Router->AP, then reset vlan.enable=0 if enabled vlan
+	[ "$sysmode" == "AP" ] && {
+		[ "$vlan_enable" == "1" ] && {
+			uci set network.vlan.enable=0
+			uci set network_sync.vlan.enable=0
+			lanif=$(uci get network.lan.ifname)
+			[ "$lanif" != "eth0.1 eth0.2" ] && {
+				uci set network.lan.ifname="eth0.1 eth0.2"
+			}
+			uci commit network
+			uci commit network_sync
+		}
+	}
+	# if AP->Router, then set vlan.enable=1 if enabled vlan
+	[ "$sysmode" == "Router" ] && {
+		[ "$vlan_enable" == "0" -a "$vid" != "0" ] && {
+			uci set network.vlan.enable=1
+			uci set network_sync.vlan.enable=1
+			uci commit network
+			uci commit network_sync
+		}
+	}
+
+#delete wan and internet section
+	if [ "$wan_type" != "$network_wan_type" ]; then
+		uci delete network.wan
+	fi
+
+	uci delete network.internet
+
+#add wan section
+	uci set network.wan=interface
+
+#restore wan mac address and save wan_type
+	uci set network.wan.macaddr="$macaddr"
+	uci set network.wan.wan_type="$wan_type"
+	local role=$(uci get bind_device_list.$(getfirm DEV_ID).role)
+	local mode=$(uci get sysmode.sysmode.mode)
+
+	case "$wan_type" in
+		dhcp)
+		#update values
+			data="$(uci get network_sync.wan.proto)"
+			uci set network.wan.proto="$data"
+
+			data="$(uci get network_sync.wan.ifname)"
+			uci set network.wan.ifname="$(ifname_sync "$data")"
+
+			data="$(uci get network_sync.wan.connectable)"
+			uci set network.wan.connectable="$data"
+
+			data="$(uci get network_sync.wan.keepup)"
+			uci set network.wan.keepup="$data"
+
+			data="$(uci get network_sync.wan.auto)"
+			uci set network.wan.auto="$data"
+
+			data="$(uci get network_sync.wan.mtu)"
+			uci set network.wan.mtu="$data"
+
+			data="$(uci get network_sync.wan.peerdns)"
+			uci set network.wan.peerdns="$data"
+
+			data="$(uci get network_sync.wan.dns)"
+			[ "0.0.0.0" != "$data" ] && {
+				uci set network.wan.dns="$data"
+			}
+
+			data="$(uci get network_sync.wan.hostname)"
+			uci set network.wan.hostname="$data"
+
+			data="$(uci get network_sync.wan.conn_mode)"
+			uci set network.wan.conn_mode="$data"
+
+			data="$(uci get network_sync.wan.broadcast)"
+			uci set network.wan.broadcast="$data"
+			;;
+		pppoe)
+		#update wan section values
+			data="$(uci get network_sync.wan.proto)"
+			uci set network.wan.proto="$data"
+
+			data="$(uci get network_sync.wan.ifname)"
+			uci set network.wan.ifname="$(ifname_sync "$data")"
+
+			data="$(uci get network_sync.wan.connectable)"
+			uci set network.wan.connectable="$data"
+
+			data="$(uci get network_sync.wan.keepup)"
+			uci set network.wan.keepup="$data"
+
+			data="$(uci get network_sync.wan.auto)"
+			uci set network.wan.auto="$data"
+
+			data="$(uci get network_sync.wan.mtu)"
+			uci set network.wan.mtu="$data"
+
+		#add internet section
+			uci set network.internet=interface
+		#update internet section values
+			data="$(uci get network_sync.internet.keepalive)"
+			uci set network.internet.keepalive="$data"
+
+			data="$(uci get network_sync.internet.proto)"
+			uci set network.internet.proto="$data"
+
+			data="$(uci get network_sync.internet.parent)"
+			uci set network.internet.parent="$data"
+
+			data="$(uci get network_sync.internet.conn_mode)"
+			uci set network.internet.conn_mode="$data"
+
+			data="$(uci get network_sync.internet.dns_mode)"
+			uci set network.internet.dns_mode="$data"
+
+			data="$(uci get network_sync.internet.ip_mode)"
+			uci set network.internet.ip_mode="$data"
+
+			data="$(uci get network_sync.internet.username)"
+			uci set network.internet.username="$data"
+
+			data="$(uci get network_sync.internet.auto)"
+			uci set network.internet.auto="$data"
+
+			data="$(uci get network_sync.internet.dns)"
+			uci set network.internet.dns="$data"
+
+			data="$(uci get network_sync.internet.connectable)"
+			uci set network.internet.connectable="$data"
+
+			data="$(uci get network_sync.internet.mru)"
+			uci set network.internet.mru="$data"
+
+			data="$(uci get network_sync.internet.password)"
+			uci set network.internet.password="$data"
+ 
+			data="$(uci get network_sync.internet.ifname)"
+			uci set network.internet.ifname="$(ifname_sync "$data")"
+			;;
+		pptp)
+		#update wan section values
+			data="$(uci get network_sync.wan.proto)"
+			uci set network.wan.proto="$data"
+
+			[ "$data" == "static" ] && {
+				data="$(uci get network_sync.wan.ipaddr)"
+				uci set network.wan.ipaddr="$data"
+
+				data="$(uci get network_sync.wan.netmask)"
+				uci set network.wan.netmask="$data"
+
+				data="$(uci get network_sync.wan.gateway)"
+				uci set network.wan.gateway="$data"
+
+				data="$(uci get network_sync.wan.dns)"
+				uci set network.wan.dns="$data"
+			}
+
+
+			data="$(uci get network_sync.wan.ifname)"
+			uci set network.wan.ifname="$(ifname_sync "$data")"
+
+			data="$(uci get network_sync.wan.connectable)"
+			uci set network.wan.connectable="$data"
+
+			data="$(uci get network_sync.wan.keepup)"
+			uci set network.wan.keepup="$data"
+
+			data="$(uci get network_sync.wan.auto)"
+			uci set network.wan.auto="$data"
+
+			data="$(uci get network_sync.wan.mtu)"
+			uci set network.wan.mtu="$data"
+
+		#add internet section
+			uci set network.internet=interface
+		#update internet section values
+			data="$(uci get network_sync.internet.keepalive)"
+			uci set network.internet.keepalive="$data"
+
+			data="$(uci get network_sync.internet.proto)"
+			uci set network.internet.proto="$data"
+
+			data="$(uci get network_sync.internet.parent)"
+			uci set network.internet.parent="$data"
+
+			data="$(uci get network_sync.internet.conn_mode)"
+			uci set network.internet.conn_mode="$data"
+
+			data="$(uci get network_sync.internet.dns_mode)"
+			uci set network.internet.dns_mode="$data"
+
+			data="$(uci get network_sync.internet.ip_mode)"
+			uci set network.internet.ip_mode="$data"
+
+			data="$(uci get network_sync.internet.username)"
+			uci set network.internet.username="$data"
+
+			data="$(uci get network_sync.internet.auto)"
+			uci set network.internet.auto="$data"
+
+			data="$(uci get network_sync.internet.dns)"
+			uci set network.internet.dns="$data"
+
+			data="$(uci get network_sync.internet.connectable)"
+			uci set network.internet.connectable="$data"
+
+			data="$(uci get network_sync.internet.mru)"
+			uci set network.internet.mru="$data"
+
+			data="$(uci get network_sync.internet.password)"
+			uci set network.internet.password="$data"
+ 
+			data="$(uci get network_sync.internet.ifname)"
+			uci set network.internet.ifname="$(ifname_sync "$data")"
+
+			data="$(uci get network_sync.internet.server)"
+			uci set network.internet.server="$data"	
+
+			data="$(uci get network_sync.internet.wan_type)"
+			uci set network.internet.wan_type="$data"	
+			;;
+		l2tp)
+		#update wan section values
+			data="$(uci get network_sync.wan.proto)"
+			uci set network.wan.proto="$data"
+
+			[ "$data" == "static" ] && {
+				data="$(uci get network_sync.wan.ipaddr)"
+				uci set network.wan.ipaddr="$data"
+
+				data="$(uci get network_sync.wan.netmask)"
+				uci set network.wan.netmask="$data"
+
+				data="$(uci get network_sync.wan.gateway)"
+				uci set network.wan.gateway="$data"
+
+				data="$(uci get network_sync.wan.dns)"
+				uci set network.wan.dns="$data"
+			}
+
+			data="$(uci get network_sync.wan.ifname)"
+			uci set network.wan.ifname="$(ifname_sync "$data")"
+
+			data="$(uci get network_sync.wan.connectable)"
+			uci set network.wan.connectable="$data"
+
+			data="$(uci get network_sync.wan.keepup)"
+			uci set network.wan.keepup="$data"
+
+			data="$(uci get network_sync.wan.auto)"
+			uci set network.wan.auto="$data"
+
+			data="$(uci get network_sync.wan.mtu)"
+			uci set network.wan.mtu="$data"
+
+		#add internet section
+			uci set network.internet=interface
+		#update internet section values
+			data="$(uci get network_sync.internet.keepalive)"
+			uci set network.internet.keepalive="$data"
+
+			data="$(uci get network_sync.internet.proto)"
+			uci set network.internet.proto="$data"
+
+			data="$(uci get network_sync.internet.parent)"
+			uci set network.internet.parent="$data"
+
+			data="$(uci get network_sync.internet.conn_mode)"
+			uci set network.internet.conn_mode="$data"
+
+			data="$(uci get network_sync.internet.dns_mode)"
+			uci set network.internet.dns_mode="$data"
+
+			data="$(uci get network_sync.internet.ip_mode)"
+			uci set network.internet.ip_mode="$data"
+
+			data="$(uci get network_sync.internet.username)"
+			uci set network.internet.username="$data"
+
+			data="$(uci get network_sync.internet.auto)"
+			uci set network.internet.auto="$data"
+
+			data="$(uci get network_sync.internet.dns)"
+			uci set network.internet.dns="$data"
+
+			data="$(uci get network_sync.internet.connectable)"
+			uci set network.internet.connectable="$data"
+
+			data="$(uci get network_sync.internet.mru)"
+			uci set network.internet.mru="$data"
+
+			data="$(uci get network_sync.internet.password)"
+			uci set network.internet.password="$data"
+ 
+			data="$(uci get network_sync.internet.ifname)"
+			uci set network.internet.ifname="$(ifname_sync "$data")"
+
+			data="$(uci get network_sync.internet.server)"
+			uci set network.internet.server="$data"	
+
+			data="$(uci get network_sync.internet.wan_type)"
+			uci set network.internet.wan_type="$data"	
+			;;
+		static)
+		#update values
+			data="$(uci get network_sync.wan.proto)"
+			uci set network.wan.proto="$data"
+
+			data="$(uci get network_sync.wan.auto)"
+			uci set network.wan.auto="$data"
+
+			data="$(uci get network_sync.wan.mtu)"
+			uci set network.wan.mtu="$data"
+
+			data="$(uci get network_sync.wan.netmask)"
+			uci set network.wan.netmask="$data"
+
+			data="$(uci get network_sync.wan.conn_mode)"
+			uci set network.wan.conn_mode="$data"
+
+			data="$(uci get network_sync.wan.connectable)"
+			uci set network.wan.connectable="$data"
+
+			data="$(uci get network_sync.wan.dns)"
+			uci set network.wan.dns="$data"
+
+			data="$(uci get network_sync.wan.gateway)"
+			uci set network.wan.gateway="$data"
+
+			[ $role == "AP" -a "$mode" == "Router" ] && { 
+				data="$(uci get network_sync.wan.ipaddr)"
+				[ $data ] && { 
+						uci set network.wan.ipaddr="$data" 
+				}
+			}
+ 
+			data="$(uci get network_sync.wan.ifname)"
+			uci set network.wan.ifname="$(ifname_sync "$data")"
+ 
+			data="$(uci get network_sync.wan.keepup)"
+			uci set network.wan.keepup="$data"
+			;;
+		pppoeshare)
+		#update wan section values
+			data="$(uci get network_sync.wan.proto)"
+			uci set network.wan.proto="$data"
+
+			data="$(uci get network_sync.wan.ifname)"
+			uci set network.wan.ifname="$(ifname_sync "$data")"
+
+			data="$(uci get network_sync.wan.connectable)"
+			uci set network.wan.connectable="$data"
+
+			data="$(uci get network_sync.wan.keepup)"
+			uci set network.wan.keepup="$data"
+
+			data="$(uci get network_sync.wan.auto)"
+			uci set network.wan.auto="$data"
+
+			data="$(uci get network_sync.wan.mtu)"
+			uci set network.wan.mtu="$data"
+
+			data="$(uci get network_sync.wan.ip_config)"
+			uci set network.wan.ip_config="$data"
+
+			data="$(uci get network_sync.wan.lanif)"
+			uci set network.wan.lanif="$data"
+
+		#add internet section
+			uci set network.internet=interface
+		#update internet section values
+			data="$(uci get network_sync.internet.keepalive)"
+			uci set network.internet.keepalive="$data"
+
+			data="$(uci get network_sync.internet.proto)"
+			uci set network.internet.proto="$data"
+
+			data="$(uci get network_sync.internet.parent)"
+			uci set network.internet.parent="$data"
+
+			data="$(uci get network_sync.internet.conn_mode)"
+			uci set network.internet.conn_mode="$data"
+
+			data="$(uci get network_sync.internet.dns_mode)"
+			uci set network.internet.dns_mode="$data"
+
+			data="$(uci get network_sync.internet.ip_mode)"
+			uci set network.internet.ip_mode="$data"
+
+			data="$(uci get network_sync.internet.username)"
+			uci set network.internet.username="$data"
+
+			data="$(uci get network_sync.internet.auto)"
+			uci set network.internet.auto="$data"
+
+			data="$(uci get network_sync.internet.dns)"
+			uci set network.internet.dns="$data"
+
+			data="$(uci get network_sync.internet.connectable)"
+			uci set network.internet.connectable="$data"
+
+			data="$(uci get network_sync.internet.mru)"
+			uci set network.internet.mru="$data"
+
+			data="$(uci get network_sync.internet.password)"
+			uci set network.internet.password="$data"
+
+			data="$(uci get network_sync.internet.ifname)"
+			uci set network.internet.ifname="$(ifname_sync "$data")"
+			data="$(uci get network_sync.internet.dnsv6_mode)"
+			uci set network.internet.dnsv6_mode="$data"
+
+			data="$(uci get network_sync.internet.ipv6_mode)"
+			uci set network.internet.ipv6_mode="$data"
+			;;
+		*)
+			echo "unsupported wan type..." > /dev/console
+			;;
+	esac
+	local ipv6_enable=$(uci get protocol.wanv6.enable)
+	if [ "$ipv6_enable" == "on" ]; then 
+		#Update wanv6.ifname in needed.
+		local ipv6_ifname=$(uci get network_sync.wanv6.ifname)
+		local ipv4_ifname=$(uci get network_sync.wan.ifname)
+		[ "$ipv6_enable" == "on" ] && {
+			[ "$ipv6_ifname" != "$ipv4_ifname" ] && {
+				uci set network_sync.wanv6.ifname="$ipv4_ifname"
+				uci commit network_sync
+			}
+		}
+
+		#delete wan and internet section
+		uci delete network.wanv6
+		#uci delete network.internet
+		[ "$wan_type" != "pppoeshare" ] && {
+			#add wan section
+			uci set network.wanv6=interface
+
+			local wanv6_type="$(uci get network_sync.wanv6.wan_type)"
+			case "$wanv6_type" in
+				dhcp6c)
+				#update values
+					data="$(uci get network_sync.wanv6.proto)"
+					uci set network.wanv6.proto="$data"
+
+					data="$(uci get network_sync.wanv6.auto)"
+					uci set network.wanv6.auto="$data"
+
+					data="$(uci get network_sync.wanv6.lanif)"
+					uci set network.wanv6.lanif="$data"
+
+					data="$(uci get network_sync.wanv6.peerdns)"
+					uci set network.wanv6.peerdns="$data"
+
+					data="$(uci get network_sync.wanv6.ip_mode)"
+					uci set network.wanv6.ip_mode="$data"
+
+					data="$(uci get network_sync.wanv6.ip_config)"
+					uci set network.wanv6.ip_config="$data"
+
+					data="$(uci get network_sync.wanv6.wan_type)"
+					uci set network.wanv6.wan_type="$data"
+
+					data="$(uci get network_sync.wanv6.conn_mode)"
+					uci set network.wanv6.conn_mode="$data"
+
+					data="$(uci get network_sync.wanv6.connectable)"
+					uci set network.wanv6.connectable="$data"
+
+					data="$(uci get network_sync.wanv6.dns_mode)"
+					uci set network.wanv6.dns_mode="$data"
+
+					[ "$data" == "static" ] && {
+						data="$(uci get network_sync.wanv6.dns)"
+						uci set network.wanv6.dns="$data"
+					}
+
+					data="$(uci get network_sync.wanv6.ifname)"
+					uci set network.wanv6.ifname="$(ifname_sync "$data")"
+					;;
+				pppoev6)
+				#update wan section values
+					data="$(uci get network_sync.wanv6.proto)"
+					uci set network.wanv6.proto="$data"
+
+					data="$(uci get network_sync.wanv6.lanif)"
+					uci set network.wanv6.lanif="$data"
+
+					data="$(uci get network_sync.wanv6.conn_mode)"
+					uci set network.wanv6.conn_mode="$data"
+
+					data="$(uci get network_sync.wanv6.dns_mode)"
+					uci set network.wanv6.dns_mode="$data"
+
+					[ "$data" == "static" ] && {
+						data="$(uci get network_sync.wanv6.dns)"
+						uci set network.wanv6.dns="$data"
+					}
+
+					data="$(uci get network_sync.wanv6.mru)"
+					uci set network.wanv6.mru="$data"
+
+					data="$(uci get network_sync.wanv6.connectable)"
+					uci set network.wanv6.connectable="$data"
+
+					data="$(uci get network_sync.wanv6.auto)"
+					uci set network.wanv6.auto="$data"
+
+					data="$(uci get network_sync.wanv6.password)"
+					uci set network.wanv6.password="$data"
+
+					data="$(uci get network_sync.wanv6.ip_config)"
+					uci set network.wanv6.ip_config="$data"
+
+					data="$(uci get network_sync.wanv6.username)"
+					uci set network.wanv6.username="$data"
+					
+					data="$(uci get network_sync.wanv6.keeplive)"
+					uci set network.wanv6.keeplive="$data"
+
+					data="$(uci get network_sync.wanv6.wan_type)"
+					uci set network.wanv6.wan_type="$data"
+
+					data="$(uci get network_sync.wanv6.ifname)"
+					uci set network.wanv6.ifname="$(ifname_sync "$data")"
+
+					data="$(uci get network_sync.wanv6.ip_mode)"
+					uci set network.wanv6.ip_mode="$data"
+					;;
+				passthrough)
+					#update values
+					data="$(uci get network_sync.wanv6.proto)"
+					uci set network.wanv6.proto="$data"
+
+					data="$(uci get network_sync.wanv6.wan_type)"
+					uci set network.wanv6.wan_type="$data"
+
+					data="$(uci get network_sync.wanv6.conn_mode)"
+					uci set network.wanv6.conn_mode="$data"
+
+					data="$(uci get network_sync.wanv6.connectable)"
+					uci set network.wanv6.connectable="$data"
+					;;	
+				6to4)
+					#update values
+					data="$(uci get network_sync.wanv6.proto)"
+					uci set network.wanv6.proto="$data"
+
+					data="$(uci get network_sync.wanv6.auto)"
+					uci set network.wanv6.auto="$data"
+
+					data="$(uci get network_sync.wanv6.wan_type)"
+					uci set network.wanv6.wan_type="$data"
+
+					data="$(uci get network_sync.wanv6.connectable)"
+					uci set network.wanv6.connectable="$data"
+
+					data="$(uci get network_sync.wanv6.conn_mode)"
+					uci set network.wanv6.conn_mode="$data"
+
+					data="$(uci get network_sync.wanv6.ttl)"
+					uci set network.wanv6.ttl="$data"
+
+					data="$(uci get network_sync.wanv6.ifname)"
+					uci set network.wanv6.ifname="$(ifname_sync "$data")"
+
+					data="$(uci get network_sync.wanv6.dns)"
+					uci set network.wanv6.dns="$data"
+					;;
+				*)
+					echo "unsupported wanv6 type..." > /dev/console
+					uci delete network.wanv6
+					;;
+			esac
+		}
+		
+	fi
+
+	uci commit network
+	# lua -e 'require("luci.sys.config").saveconfig("device-config")'
+}
+
+start_service() {
+	load_config
+
+	local pid=""
+	local wan_ifname="$(uci get network.wan.ifname)"
+
+	[ -e /proc/sys/kernel/core_pattern ] && {
+		ulimit -c unlimited
+		echo '/tmp/%e.%p.%s.%t.core' > /proc/sys/kernel/core_pattern
+	}
+	
+	# netifd depends on "statistics" kernel module
+	insmod statistics
+	#service_start /sbin/netifd
+
+	procd_open_instance
+	procd_set_param command /sbin/netifd
+	procd_set_param respawn 600 5 5
+	procd_set_param watch network.interface
+
+	pid=$(pidof netifd)
+	if [ x"$pid" != x ]; then
+		logx -p $pid $NETWORK_MOD_ID $LOGX_ID_NETIFD_START
+	fi
+	
+	procd_close_instance
+}
+
+restart() {
+	start
+}
+
+shutdown() {
+	stop
+}
+
+stop_service() {
+	local pid=$(pidof netifd)
+
+	ifdown -a
+	if [ x"$pid" != x ]; then
+		sleep 1
+	fi
+
+	#service_stop /sbin/netifd
+	rmmod statistics
+
+	if [ x"$pid" != x ]; then
+		logx -p $pid $NETWORK_MOD_ID $LOGX_ID_NETIFD_STOP
+	fi
+}
+
+reload_service() {
+	#local action="$(uci get network.wan.action)"
+	
+	#if [ "$action" = "set" ]; then
+	#	echo do not reload the QuickSetup configuration > /dev/console
+	#	return
+	#fi
+	
+	rm -f /tmp/pppConnectionError /tmp/pppv6ConnectionError
+	load_config
+	ubus call network reload
+}
+
+service_triggers() {
+	procd_add_reload_trigger "network_sync"
+}

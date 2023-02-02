@@ -1,0 +1,8 @@
+#!/bin/sh
+
+if [ "$SRCMODE" = "NONE" -o "$SRCMODE" = "RE" ] && [ "$DSTMODE" = "FAP" -o "$DSTMODE" = "HAP" ] && [ -f "/tmp/radvd-br-lan/radvd.conf" ]; then
+    /usr/sbin/radvd -C "/tmp/radvd-br-lan/radvd.conf" -p "/tmp/radvd-br-lan/radvd.pid"
+elif [ "$SRCMODE" = "NONE" -o "$SRCMODE" = "FAP" -o "$SRCMODE" = "HAP" ] && [ "$DSTMODE" = "RE" ]; then
+    killall radvd
+fi
+

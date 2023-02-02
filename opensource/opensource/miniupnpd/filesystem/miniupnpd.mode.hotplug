@@ -1,0 +1,15 @@
+#!/bin/sh
+
+if [ "$SRCMODE" = "RE" -o "$SRCMODE" = "HAP" -o "$SRCMODE" = "NONE" ] && [ "$DSTMODE" = "FAP" ]; then
+    MODE=RE2AP
+elif [ "$SRCMODE" = "RE" -o "$SRCMODE" = "FAP" -o "$SRCMODE" = "HAP" -o "$SRCMODE" = "NONE" ] && [ "$DSTMODE" = "RE" ]; then
+    MODE=AP2RE
+fi
+
+if [ "$POINT" == "END" ] && [ "$MODE" = "AP2RE" ]; then
+    /etc/init.d/miniupnpd stop &
+fi
+if [ "$POINT" == "END" ] && [ "$MODE" = "RE2AP" ]; then
+    /etc/init.d/miniupnpd start &
+fi
+

@@ -1,0 +1,29 @@
+#!/bin/sh
+
+#lock
+local lock_reload_config="/var/run/reload_config.lock"
+lock $lock_reload_config
+trap "" HUP INT TERM ABRT QUIT ALRM TSTP
+
+rm -rf /var/run/config.check
+mkdir -p /var/run/config.check
+for config in /etc/config/*; do
+	file=${config##*/}
+	uci show "${file##*/}" | sort > /var/run/config.check/$file
+done
+MD5FILE=/var/run/config.md5
+[ -f $MD5FILE ] && {
+	for c in `md5sum -c $MD5FILE 2>/dev/null| grep FAILED | cut -d: -f1`; do
+		ubus call service event "{ \"type\": \"config.change\", \"data\": { \"package\": \"$(basename $c)\" }}"
+	done
+}
+md5sum /var/run/config.check/network* > $MD5FILE
+md5sum /var/run/config.check/w* >> $MD5FILE
+md5sum /var/run/config.check/[!wn]* >> $MD5FILE
+md5sum /var/run/config.check/nat >> $MD5FILE
+md5sum /var/run/config.check/nrd >> $MD5FILE
+rm -rf /var/run/config.check
+
+#release
+trap  HUP INT TERM ABRT QUIT ALRM TSTP
+lock -u $lock_reload_config

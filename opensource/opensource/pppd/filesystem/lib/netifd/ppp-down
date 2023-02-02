@@ -1,0 +1,25 @@
+#!/bin/sh
+PPP_IPPARAM="$6"
+
+. /lib/netifd/netifd-proto.sh
+. /lib/functions/network.sh
+proto_init_update "$IFNAME" 0
+proto_send_update "$PPP_IPPARAM"
+
+[ -d /etc/ppp/ip-down.d ] && {
+	for SCRIPT in /etc/ppp/ip-down.d/*
+	do
+		[ -x "$SCRIPT" ] && "$SCRIPT" "$@"
+	done
+}
+
+#while pptp/l2tp down, recover default route using wan nexthop. So secondary connection can be used again.
+local wan_type="$(uci get network.wan.wan_type)"
+local gateway
+
+network_get_gateway gateway wan
+
+[ "$wan_type" == "l2tp" -o "$wan_type" == "pptp" ] && {
+
+    route add default gw $gateway
+}

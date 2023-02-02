@@ -1,0 +1,31 @@
+#!/bin/sh
+
+. /lib/switch/core_phy.sh
+
+
+case "$1" in
+	*up) act=up;;
+	*down) act=down;;
+	*) echo "Invalid parametre: $1";;
+esac
+
+case "$2" in
+	*lan) 
+              if [ "$act" == "up" ]; then
+                  link_up_lan_ports
+              elif [ "$act" == "down" ]; then
+                  link_down_lan_ports
+              fi
+              ;;
+
+	*wan) 
+              if [ "$act" == "up" ]; then
+                  link_up_wan_ports
+              elif [ "$act" == "down" ]; then
+                  link_down_wan_ports
+              fi
+              ;;
+
+	*) echo "Invalid parametre: $2";;
+esac
+

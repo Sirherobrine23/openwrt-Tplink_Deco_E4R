@@ -1,0 +1,82 @@
+Source-Makefile: feeds/ibase/libubox/Makefile
+Package: libubox
+Version: 2015-11-08-10429bccd0dc5d204635e110a7a8fae7b80d16cb
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread 
+Menu-Depends: 
+Provides: 
+Build-Depends: lua
+Section: libs
+Category: TP-LINK ibase
+Title: Basic utility library
+Maintainer: OpenWrt Developers Team <openwrt-devel@openwrt.org>
+Source: libubox-2015-11-08-10429bccd0dc5d204635e110a7a8fae7b80d16cb.tar.gz
+Type: ipkg
+Description: Basic utility library
+OpenWrt Developers Team <openwrt-devel@openwrt.org>
+@@
+
+Package: libblobmsg-json
+Version: 2015-11-08-10429bccd0dc5d204635e110a7a8fae7b80d16cb
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libjson-c +libubox
+Menu-Depends: 
+Provides: 
+Build-Depends: lua
+Section: libs
+Category: TP-LINK ibase
+Title: blobmsg <-> json conversion library
+Maintainer: OpenWrt Developers Team <openwrt-devel@openwrt.org>
+Source: libubox-2015-11-08-10429bccd0dc5d204635e110a7a8fae7b80d16cb.tar.gz
+Type: ipkg
+Description: blobmsg <-> json conversion library
+OpenWrt Developers Team <openwrt-devel@openwrt.org>
+@@
+
+Package: jshn
+Version: 2015-11-08-10429bccd0dc5d204635e110a7a8fae7b80d16cb
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libjson-c +libubox +libblobmsg-json
+Menu-Depends: 
+Provides: 
+Build-Depends: lua
+Section: utils
+Category: TP-LINK ibase
+Title: JSON SHell Notation
+Maintainer: OpenWrt Developers Team <openwrt-devel@openwrt.org>
+Source: libubox-2015-11-08-10429bccd0dc5d204635e110a7a8fae7b80d16cb.tar.gz
+Type: ipkg
+Description:   Library for parsing and generating JSON from shell scripts
+OpenWrt Developers Team <openwrt-devel@openwrt.org>
+@@
+
+Package: libjson-script
+Version: 2015-11-08-10429bccd0dc5d204635e110a7a8fae7b80d16cb
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libubox
+Menu-Depends: 
+Provides: 
+Build-Depends: lua
+Section: utils
+Category: TP-LINK ibase
+Title: Minimalistic JSON based scripting engine
+Maintainer: OpenWrt Developers Team <openwrt-devel@openwrt.org>
+Source: libubox-2015-11-08-10429bccd0dc5d204635e110a7a8fae7b80d16cb.tar.gz
+Type: ipkg
+Description: Minimalistic JSON based scripting engine
+OpenWrt Developers Team <openwrt-devel@openwrt.org>
+@@
+
+Package: libubox-lua
+Version: 2015-11-08-10429bccd0dc5d204635e110a7a8fae7b80d16cb
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libubox +liblua
+Menu-Depends: 
+Provides: 
+Build-Depends: lua
+Section: libs
+Category: Libraries
+Title: Lua binding for the OpenWrt Basic utility library
+Maintainer: OpenWrt Developers Team <openwrt-devel@openwrt.org>
+Source: libubox-2015-11-08-10429bccd0dc5d204635e110a7a8fae7b80d16cb.tar.gz
+Type: ipkg
+Description: Lua binding for the OpenWrt Basic utility library
+OpenWrt Developers Team <openwrt-devel@openwrt.org>
+@@
+
+

@@ -1,0 +1,1788 @@
+Source-Makefile: feeds/iplatform/libjson-c/Makefile
+Package: libjson-c
+Version: 0.11-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread 
+Menu-Depends: 
+Provides: 
+Section: TP-LINK
+Category: TP-LINK iplatform apps
+Title: javascript object notation
+Maintainer: OpenWrt Developers Team <openwrt-devel@openwrt.org>
+Source: json-c-0.11.tar.gz
+Type: ipkg
+Description:  This package contains a library for javascript object notation backends.
+http://oss.metaparadigm.com/json-c/
+OpenWrt Developers Team <openwrt-devel@openwrt.org>
+@@
+
+Package: libjson
+Version: 0.11-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libjson-c
+Menu-Depends: 
+Provides: 
+Section: TP-LINK
+Category: TP-LINK iplatform apps
+Title: javascript object notation (compat library)
+Maintainer: OpenWrt Developers Team <openwrt-devel@openwrt.org>
+Source: json-c-0.11.tar.gz
+Type: ipkg
+Description:  This package contains a compatibility library for packages that have not
+ been adapted to the json-c library rename yet
+http://oss.metaparadigm.com/json-c/
+OpenWrt Developers Team <openwrt-devel@openwrt.org>
+@@
+
+
+Source-Makefile: feeds/iplatform/busybox/Makefile
+Package: busybox
+Menu: 1
+Version: 1.22.1-3
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +BUSYBOX_USE_LIBRPC:librpc +BUSYBOX_CONFIG_PAM:libpam +common +ubus +libubus +libubox +libblobmsg-json +libuci +uci
+Menu-Depends: 
+Provides: 
+Build-Depends: BUSYBOX_USE_LIBRPC:librpc BUSYBOX_CONFIG_PAM:libpam
+Section: TP-LINK
+Category: TP-LINK iplatform apps
+Title: Core utilities for embedded Linux
+Maintainer: Felix Fietkau <nbd@openwrt.org>
+Source: busybox-1.22.1.tar.bz2
+Type: ipkg
+Description:  The Swiss Army Knife of embedded Linux.
+ It slices, it dices, it makes Julian Fries.
+http://busybox.net/
+Felix Fietkau <nbd@openwrt.org>
+@@
+Config:
+	source "opensource/opensource/busybox/Config.in"
+@@
+
+
+Source-Makefile: feeds/iplatform/radvd/Makefile
+Package: radvd
+Submenu: IPv6
+Version: 1.7-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +kmod-ipv6 +libdaemon +IFADDRS:libifaddrs
+Menu-Depends: 
+Provides: 
+Section: ipv6
+Category: TP-LINK iplatform apps
+Title: IPv6 Routing Advertisement Daemon
+Maintainer: OpenWrt Developers Team <openwrt-devel@openwrt.org>
+Source: 
+Type: ipkg
+Description: radvd is the router advertisement daemon for IPv6. It listens to router
+solicitations and sends router advertisements as described in "Neighbor
+Discovery for IP Version 6 (IPv6)" (RFC 4861).  With these advertisements hosts
+can automatically configure their addresses and some other parameters. They also
+can choose a default router based on these advertisements.
+OpenWrt Developers Team <openwrt-devel@openwrt.org>
+@@
+
+Package: radvdump
+Submenu: IPv6
+Version: 1.7-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +kmod-ipv6 +libdaemon +IFADDRS:libifaddrs
+Menu-Depends: 
+Provides: 
+Section: ipv6
+Category: TP-LINK iplatform apps
+Title: IPv6 Routing Advertisement Dumper
+Maintainer: OpenWrt Developers Team <openwrt-devel@openwrt.org>
+Source: 
+Type: ipkg
+Description: radvdump prints out the contents of incoming router advertisements sent by radvd
+or some other software implementing (parts of) "Neighbor Discovery for IP
+Version 6 (IPv6)" (RFC 4861).
+OpenWrt Developers Team <openwrt-devel@openwrt.org>
+@@
+
+
+Source-Makefile: feeds/iplatform/libpcap/Makefile
+Package: libpcap
+Menu: 1
+Version: 1.1.1-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread 
+Menu-Depends: 
+Provides: 
+Section: TP-LINK
+Category: TP-LINK iplatform apps
+Title: Low-level packet capture library
+Maintainer: OpenWrt Developers Team <openwrt-devel@openwrt.org>
+Source: libpcap-1.1.1.tar.gz
+Type: ipkg
+Description: This package contains a system-independent library for user-level network packet
+capture.
+http://www.tcpdump.org/
+OpenWrt Developers Team <openwrt-devel@openwrt.org>
+@@
+Config:
+	source "opensource/opensource/libpcap/Config.in"
+@@
+
+
+Source-Makefile: feeds/iplatform/wide-dhcpv6/Makefile
+Package: wide-dhcpv6-client
+Submenu: IPv6
+Version: 20080615-11
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +kmod-ipv6
+Menu-Depends: 
+Provides: 
+Section: ipv6
+Category: TP-LINK iplatform apps
+Title: WIDE-DHCPv6 client
+Maintainer: OpenWrt Developers Team <openwrt-devel@openwrt.org>
+Source: 
+Type: ipkg
+Description: 	WIDE-DHCPv6 is an open-source implementation of Dynamic Host Configuration Protocol
+	for IPv6 (DHCPv6) originally developed by the KAME project. The implementation
+	mainly conforms to the following standards: RFC3315,3319,3633,3646,4075,4272,etc.
+
+	This package installs the client component.
+OpenWrt Developers Team <openwrt-devel@openwrt.org>
+@@
+
+Package: wide-dhcpv6-server
+Submenu: IPv6
+Version: 20080615-11
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +kmod-ipv6
+Menu-Depends: 
+Provides: 
+Section: ipv6
+Category: TP-LINK iplatform apps
+Title: WIDE-DHCPv6 server
+Maintainer: OpenWrt Developers Team <openwrt-devel@openwrt.org>
+Source: 
+Type: ipkg
+Description: 	WIDE-DHCPv6 is an open-source implementation of Dynamic Host Configuration Protocol
+	for IPv6 (DHCPv6) originally developed by the KAME project. The implementation
+	mainly conforms to the following standards: RFC3315,3319,3633,3646,4075,4272,etc.
+
+	This package installs the server component.
+OpenWrt Developers Team <openwrt-devel@openwrt.org>
+@@
+
+
+Source-Makefile: feeds/iplatform/xtables-addons/Makefile
+Package: kmod-ipt-compat-xtables
+Submenu: xtables-addons
+Version: <LINUX_VERSION>+1.45-3
+Depends: +kmod-ipt-core +IPV6:kmod-ip6tables
+Menu-Depends: 
+Provides: 
+Build-Depends: iptables
+Section: TP-LINK
+Category: TP-LINK iplatform apps
+Title: API compatibilty layer netfilter module
+Maintainer: OpenWrt Developers Team <openwrt-devel@openwrt.org>
+Source: xtables-addons-1.45.tar.xz
+Type: ipkg
+Kernel-Config: CONFIG_NF_CONNTRACK_MARK=y
+Description: API compatibilty layer netfilter module
+http://xtables-addons.sourceforge.net/
+OpenWrt Developers Team <openwrt-devel@openwrt.org>
+@@
+
+Package: kmod-ipt-rawpost
+Submenu: xtables-addons
+Version: <LINUX_VERSION>+1.45-3
+Depends: +kmod-ipt-core +kmod-ipt-compat-xtables +IPV6:kmod-ip6tables
+Menu-Depends: 
+Provides: 
+Build-Depends: iptables
+Section: TP-LINK
+Category: TP-LINK iplatform apps
+Title: RAWPOST netfilter module
+Maintainer: OpenWrt Developers Team <openwrt-devel@openwrt.org>
+Source: xtables-addons-1.45.tar.xz
+Type: ipkg
+Description: RAWPOST netfilter module
+http://xtables-addons.sourceforge.net/
+OpenWrt Developers Team <openwrt-devel@openwrt.org>
+@@
+
+Package: kmod-ipt-nathelper-rtsp
+Submenu: xtables-addons
+Version: <LINUX_VERSION>+1.45-3
+Depends: +kmod-ipt-core +kmod-ipt-conntrack-extra +kmod-ipt-nat
+Menu-Depends: 
+Provides: 
+Build-Depends: iptables
+Section: TP-LINK
+Category: TP-LINK iplatform apps
+Title: RTSP Conntrack and NAT netfilter module
+Maintainer: OpenWrt Developers Team <openwrt-devel@openwrt.org>
+Source: xtables-addons-1.45.tar.xz
+Type: ipkg
+Description: RTSP Conntrack and NAT netfilter module
+http://xtables-addons.sourceforge.net/
+OpenWrt Developers Team <openwrt-devel@openwrt.org>
+@@
+
+Package: iptables-mod-pctl
+Submenu: xtables-addons
+Version: 1.45-3
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread iptables +kmod-ipt-pctl
+Menu-Depends: 
+Provides: 
+Build-Depends: iptables
+Section: TP-LINK
+Category: TP-LINK iplatform apps
+Title: pctl iptables extension
+Maintainer: OpenWrt Developers Team <openwrt-devel@openwrt.org>
+Source: xtables-addons-1.45.tar.xz
+Type: ipkg
+Description: pctl iptables extension
+http://xtables-addons.sourceforge.net/
+OpenWrt Developers Team <openwrt-devel@openwrt.org>
+@@
+
+Package: kmod-ipt-pctl
+Submenu: xtables-addons
+Version: <LINUX_VERSION>+1.45-3
+Depends: +kmod-ipt-core 46
+Menu-Depends: 
+Provides: 
+Build-Depends: iptables
+Section: TP-LINK
+Category: TP-LINK iplatform apps
+Title: pctl netfilter module
+Maintainer: OpenWrt Developers Team <openwrt-devel@openwrt.org>
+Source: xtables-addons-1.45.tar.xz
+Type: ipkg
+Description: pctl netfilter module
+http://xtables-addons.sourceforge.net/
+OpenWrt Developers Team <openwrt-devel@openwrt.org>
+@@
+
+Package: iptables-mod-account
+Submenu: xtables-addons
+Version: 1.45-3
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread iptables +kmod-ipt-account
+Menu-Depends: 
+Provides: 
+Build-Depends: iptables
+Section: TP-LINK
+Category: TP-LINK iplatform apps
+Title: ACCOUNT iptables extension
+Maintainer: OpenWrt Developers Team <openwrt-devel@openwrt.org>
+Source: xtables-addons-1.45.tar.xz
+Type: ipkg
+Description: ACCOUNT iptables extension
+http://xtables-addons.sourceforge.net/
+OpenWrt Developers Team <openwrt-devel@openwrt.org>
+@@
+
+Package: kmod-ipt-account
+Submenu: xtables-addons
+Version: <LINUX_VERSION>+1.45-3
+Depends: +kmod-ipt-core +kmod-ipt-compat-xtables
+Menu-Depends: 
+Provides: 
+Build-Depends: iptables
+Section: TP-LINK
+Category: TP-LINK iplatform apps
+Title: ACCOUNT netfilter module
+Maintainer: OpenWrt Developers Team <openwrt-devel@openwrt.org>
+Source: xtables-addons-1.45.tar.xz
+Type: ipkg
+Description: ACCOUNT netfilter module
+http://xtables-addons.sourceforge.net/
+OpenWrt Developers Team <openwrt-devel@openwrt.org>
+@@
+
+Package: iptables-mod-chaos
+Submenu: xtables-addons
+Version: 1.45-3
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread iptables +kmod-ipt-chaos
+Menu-Depends: 
+Provides: 
+Build-Depends: iptables
+Section: TP-LINK
+Category: TP-LINK iplatform apps
+Title: CHAOS iptables extension
+Maintainer: OpenWrt Developers Team <openwrt-devel@openwrt.org>
+Source: xtables-addons-1.45.tar.xz
+Type: ipkg
+Description: CHAOS iptables extension
+http://xtables-addons.sourceforge.net/
+OpenWrt Developers Team <openwrt-devel@openwrt.org>
+@@
+
+Package: kmod-ipt-chaos
+Submenu: xtables-addons
+Version: <LINUX_VERSION>+1.45-3
+Depends: +kmod-ipt-core +kmod-ipt-compat-xtables +kmod-ipt-delude +kmod-ipt-tarpit
+Menu-Depends: 
+Provides: 
+Build-Depends: iptables
+Section: TP-LINK
+Category: TP-LINK iplatform apps
+Title: CHAOS netfilter module
+Maintainer: OpenWrt Developers Team <openwrt-devel@openwrt.org>
+Source: xtables-addons-1.45.tar.xz
+Type: ipkg
+Description: CHAOS netfilter module
+http://xtables-addons.sourceforge.net/
+OpenWrt Developers Team <openwrt-devel@openwrt.org>
+@@
+
+Package: iptables-mod-condition
+Submenu: xtables-addons
+Version: 1.45-3
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread iptables +kmod-ipt-condition
+Menu-Depends: 
+Provides: 
+Build-Depends: iptables
+Section: TP-LINK
+Category: TP-LINK iplatform apps
+Title: Condition iptables extension
+Maintainer: OpenWrt Developers Team <openwrt-devel@openwrt.org>
+Source: xtables-addons-1.45.tar.xz
+Type: ipkg
+Description: Condition iptables extension
+http://xtables-addons.sourceforge.net/
+OpenWrt Developers Team <openwrt-devel@openwrt.org>
+@@
+
+Package: kmod-ipt-condition
+Submenu: xtables-addons
+Version: <LINUX_VERSION>+1.45-3
+Depends: +kmod-ipt-core 
+Menu-Depends: 
+Provides: 
+Build-Depends: iptables
+Section: TP-LINK
+Category: TP-LINK iplatform apps
+Title: Condition netfilter module
+Maintainer: OpenWrt Developers Team <openwrt-devel@openwrt.org>
+Source: xtables-addons-1.45.tar.xz
+Type: ipkg
+Description: Condition netfilter module
+http://xtables-addons.sourceforge.net/
+OpenWrt Developers Team <openwrt-devel@openwrt.org>
+@@
+
+Package: iptables-mod-delude
+Submenu: xtables-addons
+Version: 1.45-3
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread iptables +kmod-ipt-delude
+Menu-Depends: 
+Provides: 
+Build-Depends: iptables
+Section: TP-LINK
+Category: TP-LINK iplatform apps
+Title: DELUDE iptables extension
+Maintainer: OpenWrt Developers Team <openwrt-devel@openwrt.org>
+Source: xtables-addons-1.45.tar.xz
+Type: ipkg
+Description: DELUDE iptables extension
+http://xtables-addons.sourceforge.net/
+OpenWrt Developers Team <openwrt-devel@openwrt.org>
+@@
+
+Package: kmod-ipt-delude
+Submenu: xtables-addons
+Version: <LINUX_VERSION>+1.45-3
+Depends: +kmod-ipt-core +kmod-ipt-compat-xtables
+Menu-Depends: 
+Provides: 
+Build-Depends: iptables
+Section: TP-LINK
+Category: TP-LINK iplatform apps
+Title: DELUDE netfilter module
+Maintainer: OpenWrt Developers Team <openwrt-devel@openwrt.org>
+Source: xtables-addons-1.45.tar.xz
+Type: ipkg
+Description: DELUDE netfilter module
+http://xtables-addons.sourceforge.net/
+OpenWrt Developers Team <openwrt-devel@openwrt.org>
+@@
+
+Package: iptables-mod-dhcpmac
+Submenu: xtables-addons
+Version: 1.45-3
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread iptables +kmod-ipt-dhcpmac
+Menu-Depends: 
+Provides: 
+Build-Depends: iptables
+Section: TP-LINK
+Category: TP-LINK iplatform apps
+Title: DHCPMAC iptables extension
+Maintainer: OpenWrt Developers Team <openwrt-devel@openwrt.org>
+Source: xtables-addons-1.45.tar.xz
+Type: ipkg
+Description: DHCPMAC iptables extension
+http://xtables-addons.sourceforge.net/
+OpenWrt Developers Team <openwrt-devel@openwrt.org>
+@@
+
+Package: kmod-ipt-dhcpmac
+Submenu: xtables-addons
+Version: <LINUX_VERSION>+1.45-3
+Depends: +kmod-ipt-core +kmod-ipt-compat-xtables
+Menu-Depends: 
+Provides: 
+Build-Depends: iptables
+Section: TP-LINK
+Category: TP-LINK iplatform apps
+Title: DHCPMAC netfilter module
+Maintainer: OpenWrt Developers Team <openwrt-devel@openwrt.org>
+Source: xtables-addons-1.45.tar.xz
+Type: ipkg
+Description: DHCPMAC netfilter module
+http://xtables-addons.sourceforge.net/
+OpenWrt Developers Team <openwrt-devel@openwrt.org>
+@@
+
+Package: iptables-mod-dnetmap
+Submenu: xtables-addons
+Version: 1.45-3
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread iptables +kmod-ipt-dnetmap
+Menu-Depends: 
+Provides: 
+Build-Depends: iptables
+Section: TP-LINK
+Category: TP-LINK iplatform apps
+Title: DNETMAP iptables extension
+Maintainer: OpenWrt Developers Team <openwrt-devel@openwrt.org>
+Source: xtables-addons-1.45.tar.xz
+Type: ipkg
+Description: DNETMAP iptables extension
+http://xtables-addons.sourceforge.net/
+OpenWrt Developers Team <openwrt-devel@openwrt.org>
+@@
+
+Package: kmod-ipt-dnetmap
+Submenu: xtables-addons
+Version: <LINUX_VERSION>+1.45-3
+Depends: +kmod-ipt-core +kmod-ipt-compat-xtables +kmod-ipt-nat
+Menu-Depends: 
+Provides: 
+Build-Depends: iptables
+Section: TP-LINK
+Category: TP-LINK iplatform apps
+Title: DNETMAP netfilter module
+Maintainer: OpenWrt Developers Team <openwrt-devel@openwrt.org>
+Source: xtables-addons-1.45.tar.xz
+Type: ipkg
+Description: DNETMAP netfilter module
+http://xtables-addons.sourceforge.net/
+OpenWrt Developers Team <openwrt-devel@openwrt.org>
+@@
+
+Package: iptables-mod-fuzzy
+Submenu: xtables-addons
+Version: 1.45-3
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread iptables +kmod-ipt-fuzzy
+Menu-Depends: 
+Provides: 
+Build-Depends: iptables
+Section: TP-LINK
+Category: TP-LINK iplatform apps
+Title: fuzzy iptables extension
+Maintainer: OpenWrt Developers Team <openwrt-devel@openwrt.org>
+Source: xtables-addons-1.45.tar.xz
+Type: ipkg
+Description: fuzzy iptables extension
+http://xtables-addons.sourceforge.net/
+OpenWrt Developers Team <openwrt-devel@openwrt.org>
+@@
+
+Package: kmod-ipt-fuzzy
+Submenu: xtables-addons
+Version: <LINUX_VERSION>+1.45-3
+Depends: +kmod-ipt-core 
+Menu-Depends: 
+Provides: 
+Build-Depends: iptables
+Section: TP-LINK
+Category: TP-LINK iplatform apps
+Title: fuzzy netfilter module
+Maintainer: OpenWrt Developers Team <openwrt-devel@openwrt.org>
+Source: xtables-addons-1.45.tar.xz
+Type: ipkg
+Description: fuzzy netfilter module
+http://xtables-addons.sourceforge.net/
+OpenWrt Developers Team <openwrt-devel@openwrt.org>
+@@
+
+Package: iptables-mod-geoip
+Submenu: xtables-addons
+Version: 1.45-3
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread iptables +kmod-ipt-geoip
+Menu-Depends: 
+Provides: 
+Build-Depends: iptables
+Section: TP-LINK
+Category: TP-LINK iplatform apps
+Title: geoip iptables extension
+Maintainer: OpenWrt Developers Team <openwrt-devel@openwrt.org>
+Source: xtables-addons-1.45.tar.xz
+Type: ipkg
+Description: geoip iptables extension
+http://xtables-addons.sourceforge.net/
+OpenWrt Developers Team <openwrt-devel@openwrt.org>
+@@
+
+Package: kmod-ipt-geoip
+Submenu: xtables-addons
+Version: <LINUX_VERSION>+1.45-3
+Depends: +kmod-ipt-core 
+Menu-Depends: 
+Provides: 
+Build-Depends: iptables
+Section: TP-LINK
+Category: TP-LINK iplatform apps
+Title: geoip netfilter module
+Maintainer: OpenWrt Developers Team <openwrt-devel@openwrt.org>
+Source: xtables-addons-1.45.tar.xz
+Type: ipkg
+Description: geoip netfilter module
+http://xtables-addons.sourceforge.net/
+OpenWrt Developers Team <openwrt-devel@openwrt.org>
+@@
+
+Package: iptables-mod-iface
+Submenu: xtables-addons
+Version: 1.45-3
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread iptables +kmod-ipt-iface
+Menu-Depends: 
+Provides: 
+Build-Depends: iptables
+Section: TP-LINK
+Category: TP-LINK iplatform apps
+Title: iface iptables extension
+Maintainer: OpenWrt Developers Team <openwrt-devel@openwrt.org>
+Source: xtables-addons-1.45.tar.xz
+Type: ipkg
+Description: iface iptables extension
+http://xtables-addons.sourceforge.net/
+OpenWrt Developers Team <openwrt-devel@openwrt.org>
+@@
+
+Package: kmod-ipt-iface
+Submenu: xtables-addons
+Version: <LINUX_VERSION>+1.45-3
+Depends: +kmod-ipt-core 
+Menu-Depends: 
+Provides: 
+Build-Depends: iptables
+Section: TP-LINK
+Category: TP-LINK iplatform apps
+Title: iface netfilter module
+Maintainer: OpenWrt Developers Team <openwrt-devel@openwrt.org>
+Source: xtables-addons-1.45.tar.xz
+Type: ipkg
+Description: iface netfilter module
+http://xtables-addons.sourceforge.net/
+OpenWrt Developers Team <openwrt-devel@openwrt.org>
+@@
+
+Package: iptables-mod-ipmark
+Submenu: xtables-addons
+Version: 1.45-3
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread iptables +kmod-ipt-ipmark
+Menu-Depends: 
+Provides: 
+Build-Depends: iptables
+Section: TP-LINK
+Category: TP-LINK iplatform apps
+Title: IPMARK iptables extension
+Maintainer: OpenWrt Developers Team <openwrt-devel@openwrt.org>
+Source: xtables-addons-1.45.tar.xz
+Type: ipkg
+Description: IPMARK iptables extension
+http://xtables-addons.sourceforge.net/
+OpenWrt Developers Team <openwrt-devel@openwrt.org>
+@@
+
+Package: kmod-ipt-ipmark
+Submenu: xtables-addons
+Version: <LINUX_VERSION>+1.45-3
+Depends: +kmod-ipt-core +kmod-ipt-compat-xtables
+Menu-Depends: 
+Provides: 
+Build-Depends: iptables
+Section: TP-LINK
+Category: TP-LINK iplatform apps
+Title: IPMARK netfilter module
+Maintainer: OpenWrt Developers Team <openwrt-devel@openwrt.org>
+Source: xtables-addons-1.45.tar.xz
+Type: ipkg
+Description: IPMARK netfilter module
+http://xtables-addons.sourceforge.net/
+OpenWrt Developers Team <openwrt-devel@openwrt.org>
+@@
+
+Package: iptables-mod-ipp2p
+Submenu: xtables-addons
+Version: 1.45-3
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread iptables +kmod-ipt-ipp2p
+Menu-Depends: 
+Provides: 
+Build-Depends: iptables
+Section: TP-LINK
+Category: TP-LINK iplatform apps
+Title: IPP2P iptables extension
+Maintainer: OpenWrt Developers Team <openwrt-devel@openwrt.org>
+Source: xtables-addons-1.45.tar.xz
+Type: ipkg
+Description: IPP2P iptables extension
+http://xtables-addons.sourceforge.net/
+OpenWrt Developers Team <openwrt-devel@openwrt.org>
+@@
+
+Package: kmod-ipt-ipp2p
+Submenu: xtables-addons
+Version: <LINUX_VERSION>+1.45-3
+Depends: +kmod-ipt-core +kmod-ipt-compat-xtables
+Menu-Depends: 
+Provides: 
+Build-Depends: iptables
+Section: TP-LINK
+Category: TP-LINK iplatform apps
+Title: IPP2P netfilter module
+Maintainer: OpenWrt Developers Team <openwrt-devel@openwrt.org>
+Source: xtables-addons-1.45.tar.xz
+Type: ipkg
+Description: IPP2P netfilter module
+http://xtables-addons.sourceforge.net/
+OpenWrt Developers Team <openwrt-devel@openwrt.org>
+@@
+
+Package: iptables-mod-ipv4options
+Submenu: xtables-addons
+Version: 1.45-3
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread iptables +kmod-ipt-ipv4options
+Menu-Depends: 
+Provides: 
+Build-Depends: iptables
+Section: TP-LINK
+Category: TP-LINK iplatform apps
+Title: ipv4options iptables extension
+Maintainer: OpenWrt Developers Team <openwrt-devel@openwrt.org>
+Source: xtables-addons-1.45.tar.xz
+Type: ipkg
+Description: ipv4options iptables extension
+http://xtables-addons.sourceforge.net/
+OpenWrt Developers Team <openwrt-devel@openwrt.org>
+@@
+
+Package: kmod-ipt-ipv4options
+Submenu: xtables-addons
+Version: <LINUX_VERSION>+1.45-3
+Depends: +kmod-ipt-core 
+Menu-Depends: 
+Provides: 
+Build-Depends: iptables
+Section: TP-LINK
+Category: TP-LINK iplatform apps
+Title: ipv4options netfilter module
+Maintainer: OpenWrt Developers Team <openwrt-devel@openwrt.org>
+Source: xtables-addons-1.45.tar.xz
+Type: ipkg
+Description: ipv4options netfilter module
+http://xtables-addons.sourceforge.net/
+OpenWrt Developers Team <openwrt-devel@openwrt.org>
+@@
+
+Package: iptables-mod-length2
+Submenu: xtables-addons
+Version: 1.45-3
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread iptables +kmod-ipt-length2
+Menu-Depends: 
+Provides: 
+Build-Depends: iptables
+Section: TP-LINK
+Category: TP-LINK iplatform apps
+Title: length2 iptables extension
+Maintainer: OpenWrt Developers Team <openwrt-devel@openwrt.org>
+Source: xtables-addons-1.45.tar.xz
+Type: ipkg
+Description: length2 iptables extension
+http://xtables-addons.sourceforge.net/
+OpenWrt Developers Team <openwrt-devel@openwrt.org>
+@@
+
+Package: kmod-ipt-length2
+Submenu: xtables-addons
+Version: <LINUX_VERSION>+1.45-3
+Depends: +kmod-ipt-core +kmod-ipt-compat-xtables
+Menu-Depends: 
+Provides: 
+Build-Depends: iptables
+Section: TP-LINK
+Category: TP-LINK iplatform apps
+Title: length2 netfilter module
+Maintainer: OpenWrt Developers Team <openwrt-devel@openwrt.org>
+Source: xtables-addons-1.45.tar.xz
+Type: ipkg
+Description: length2 netfilter module
+http://xtables-addons.sourceforge.net/
+OpenWrt Developers Team <openwrt-devel@openwrt.org>
+@@
+
+Package: iptables-mod-logmark
+Submenu: xtables-addons
+Version: 1.45-3
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread iptables +kmod-ipt-logmark
+Menu-Depends: 
+Provides: 
+Build-Depends: iptables
+Section: TP-LINK
+Category: TP-LINK iplatform apps
+Title: LOGMARK iptables extension
+Maintainer: OpenWrt Developers Team <openwrt-devel@openwrt.org>
+Source: xtables-addons-1.45.tar.xz
+Type: ipkg
+Description: LOGMARK iptables extension
+http://xtables-addons.sourceforge.net/
+OpenWrt Developers Team <openwrt-devel@openwrt.org>
+@@
+
+Package: kmod-ipt-logmark
+Submenu: xtables-addons
+Version: <LINUX_VERSION>+1.45-3
+Depends: +kmod-ipt-core +kmod-ipt-compat-xtables
+Menu-Depends: 
+Provides: 
+Build-Depends: iptables
+Section: TP-LINK
+Category: TP-LINK iplatform apps
+Title: LOGMARK netfilter module
+Maintainer: OpenWrt Developers Team <openwrt-devel@openwrt.org>
+Source: xtables-addons-1.45.tar.xz
+Type: ipkg
+Description: LOGMARK netfilter module
+http://xtables-addons.sourceforge.net/
+OpenWrt Developers Team <openwrt-devel@openwrt.org>
+@@
+
+Package: iptables-mod-lscan
+Submenu: xtables-addons
+Version: 1.45-3
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread iptables +kmod-ipt-lscan
+Menu-Depends: 
+Provides: 
+Build-Depends: iptables
+Section: TP-LINK
+Category: TP-LINK iplatform apps
+Title: lscan iptables extension
+Maintainer: OpenWrt Developers Team <openwrt-devel@openwrt.org>
+Source: xtables-addons-1.45.tar.xz
+Type: ipkg
+Description: lscan iptables extension
+http://xtables-addons.sourceforge.net/
+OpenWrt Developers Team <openwrt-devel@openwrt.org>
+@@
+
+Package: kmod-ipt-lscan
+Submenu: xtables-addons
+Version: <LINUX_VERSION>+1.45-3
+Depends: +kmod-ipt-core 
+Menu-Depends: 
+Provides: 
+Build-Depends: iptables
+Section: TP-LINK
+Category: TP-LINK iplatform apps
+Title: lscan netfilter module
+Maintainer: OpenWrt Developers Team <openwrt-devel@openwrt.org>
+Source: xtables-addons-1.45.tar.xz
+Type: ipkg
+Description: lscan netfilter module
+http://xtables-addons.sourceforge.net/
+OpenWrt Developers Team <openwrt-devel@openwrt.org>
+@@
+
+Package: iptables-mod-lua
+Submenu: xtables-addons
+Version: 1.45-3
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread iptables +kmod-ipt-lua
+Menu-Depends: 
+Provides: 
+Build-Depends: iptables
+Section: TP-LINK
+Category: TP-LINK iplatform apps
+Title: Lua PacketScript iptables extension
+Maintainer: OpenWrt Developers Team <openwrt-devel@openwrt.org>
+Source: xtables-addons-1.45.tar.xz
+Type: ipkg
+Description: Lua PacketScript iptables extension
+http://xtables-addons.sourceforge.net/
+OpenWrt Developers Team <openwrt-devel@openwrt.org>
+@@
+
+Package: kmod-ipt-lua
+Submenu: xtables-addons
+Version: <LINUX_VERSION>+1.45-3
+Depends: +kmod-ipt-core +kmod-ipt-conntrack-extra
+Menu-Depends: 
+Provides: 
+Build-Depends: iptables
+Section: TP-LINK
+Category: TP-LINK iplatform apps
+Title: Lua PacketScript netfilter module
+Maintainer: OpenWrt Developers Team <openwrt-devel@openwrt.org>
+Source: xtables-addons-1.45.tar.xz
+Type: ipkg
+Description: Lua PacketScript netfilter module
+http://xtables-addons.sourceforge.net/
+OpenWrt Developers Team <openwrt-devel@openwrt.org>
+@@
+
+Package: iptables-mod-psd
+Submenu: xtables-addons
+Version: 1.45-3
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread iptables +kmod-ipt-psd
+Menu-Depends: 
+Provides: 
+Build-Depends: iptables
+Section: TP-LINK
+Category: TP-LINK iplatform apps
+Title: psd iptables extension
+Maintainer: OpenWrt Developers Team <openwrt-devel@openwrt.org>
+Source: xtables-addons-1.45.tar.xz
+Type: ipkg
+Description: psd iptables extension
+http://xtables-addons.sourceforge.net/
+OpenWrt Developers Team <openwrt-devel@openwrt.org>
+@@
+
+Package: kmod-ipt-psd
+Submenu: xtables-addons
+Version: <LINUX_VERSION>+1.45-3
+Depends: +kmod-ipt-core 
+Menu-Depends: 
+Provides: 
+Build-Depends: iptables
+Section: TP-LINK
+Category: TP-LINK iplatform apps
+Title: psd netfilter module
+Maintainer: OpenWrt Developers Team <openwrt-devel@openwrt.org>
+Source: xtables-addons-1.45.tar.xz
+Type: ipkg
+Description: psd netfilter module
+http://xtables-addons.sourceforge.net/
+OpenWrt Developers Team <openwrt-devel@openwrt.org>
+@@
+
+Package: iptables-mod-quota2
+Submenu: xtables-addons
+Version: 1.45-3
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread iptables +kmod-ipt-quota2
+Menu-Depends: 
+Provides: 
+Build-Depends: iptables
+Section: TP-LINK
+Category: TP-LINK iplatform apps
+Title: quota2 iptables extension
+Maintainer: OpenWrt Developers Team <openwrt-devel@openwrt.org>
+Source: xtables-addons-1.45.tar.xz
+Type: ipkg
+Description: quota2 iptables extension
+http://xtables-addons.sourceforge.net/
+OpenWrt Developers Team <openwrt-devel@openwrt.org>
+@@
+
+Package: kmod-ipt-quota2
+Submenu: xtables-addons
+Version: <LINUX_VERSION>+1.45-3
+Depends: +kmod-ipt-core 
+Menu-Depends: 
+Provides: 
+Build-Depends: iptables
+Section: TP-LINK
+Category: TP-LINK iplatform apps
+Title: quota2 netfilter module
+Maintainer: OpenWrt Developers Team <openwrt-devel@openwrt.org>
+Source: xtables-addons-1.45.tar.xz
+Type: ipkg
+Description: quota2 netfilter module
+http://xtables-addons.sourceforge.net/
+OpenWrt Developers Team <openwrt-devel@openwrt.org>
+@@
+
+Package: iptables-mod-rawnat
+Submenu: xtables-addons
+Version: 1.45-3
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread iptables +kmod-ipt-rawnat
+Menu-Depends: 
+Provides: 
+Build-Depends: iptables
+Section: TP-LINK
+Category: TP-LINK iplatform apps
+Title: RAWNAT iptables extension
+Maintainer: OpenWrt Developers Team <openwrt-devel@openwrt.org>
+Source: xtables-addons-1.45.tar.xz
+Type: ipkg
+Description: RAWNAT iptables extension
+http://xtables-addons.sourceforge.net/
+OpenWrt Developers Team <openwrt-devel@openwrt.org>
+@@
+
+Package: kmod-ipt-rawnat
+Submenu: xtables-addons
+Version: <LINUX_VERSION>+1.45-3
+Depends: +kmod-ipt-core +kmod-ipt-compat-xtables
+Menu-Depends: 
+Provides: 
+Build-Depends: iptables
+Section: TP-LINK
+Category: TP-LINK iplatform apps
+Title: RAWNAT netfilter module
+Maintainer: OpenWrt Developers Team <openwrt-devel@openwrt.org>
+Source: xtables-addons-1.45.tar.xz
+Type: ipkg
+Description: RAWNAT netfilter module
+http://xtables-addons.sourceforge.net/
+OpenWrt Developers Team <openwrt-devel@openwrt.org>
+@@
+
+Package: iptables-mod-steal
+Submenu: xtables-addons
+Version: 1.45-3
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread iptables +kmod-ipt-steal
+Menu-Depends: 
+Provides: 
+Build-Depends: iptables
+Section: TP-LINK
+Category: TP-LINK iplatform apps
+Title: STEAL iptables extension
+Maintainer: OpenWrt Developers Team <openwrt-devel@openwrt.org>
+Source: xtables-addons-1.45.tar.xz
+Type: ipkg
+Description: STEAL iptables extension
+http://xtables-addons.sourceforge.net/
+OpenWrt Developers Team <openwrt-devel@openwrt.org>
+@@
+
+Package: kmod-ipt-steal
+Submenu: xtables-addons
+Version: <LINUX_VERSION>+1.45-3
+Depends: +kmod-ipt-core +kmod-ipt-compat-xtables
+Menu-Depends: 
+Provides: 
+Build-Depends: iptables
+Section: TP-LINK
+Category: TP-LINK iplatform apps
+Title: STEAL netfilter module
+Maintainer: OpenWrt Developers Team <openwrt-devel@openwrt.org>
+Source: xtables-addons-1.45.tar.xz
+Type: ipkg
+Description: STEAL netfilter module
+http://xtables-addons.sourceforge.net/
+OpenWrt Developers Team <openwrt-devel@openwrt.org>
+@@
+
+Package: iptables-mod-sysrq
+Submenu: xtables-addons
+Version: 1.45-3
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread iptables +kmod-ipt-sysrq
+Menu-Depends: 
+Provides: 
+Build-Depends: iptables
+Section: TP-LINK
+Category: TP-LINK iplatform apps
+Title: SYSRQ iptables extension
+Maintainer: OpenWrt Developers Team <openwrt-devel@openwrt.org>
+Source: xtables-addons-1.45.tar.xz
+Type: ipkg
+Description: SYSRQ iptables extension
+http://xtables-addons.sourceforge.net/
+OpenWrt Developers Team <openwrt-devel@openwrt.org>
+@@
+
+Package: kmod-ipt-sysrq
+Submenu: xtables-addons
+Version: <LINUX_VERSION>+1.45-3
+Depends: +kmod-ipt-core +kmod-ipt-compat-xtables
+Menu-Depends: 
+Provides: 
+Build-Depends: iptables
+Section: TP-LINK
+Category: TP-LINK iplatform apps
+Title: SYSRQ netfilter module
+Maintainer: OpenWrt Developers Team <openwrt-devel@openwrt.org>
+Source: xtables-addons-1.45.tar.xz
+Type: ipkg
+Description: SYSRQ netfilter module
+http://xtables-addons.sourceforge.net/
+OpenWrt Developers Team <openwrt-devel@openwrt.org>
+@@
+
+Package: iptables-mod-tarpit
+Submenu: xtables-addons
+Version: 1.45-3
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread iptables +kmod-ipt-tarpit
+Menu-Depends: 
+Provides: 
+Build-Depends: iptables
+Section: TP-LINK
+Category: TP-LINK iplatform apps
+Title: TARPIT iptables extension
+Maintainer: OpenWrt Developers Team <openwrt-devel@openwrt.org>
+Source: xtables-addons-1.45.tar.xz
+Type: ipkg
+Description: TARPIT iptables extension
+http://xtables-addons.sourceforge.net/
+OpenWrt Developers Team <openwrt-devel@openwrt.org>
+@@
+
+Package: kmod-ipt-tarpit
+Submenu: xtables-addons
+Version: <LINUX_VERSION>+1.45-3
+Depends: +kmod-ipt-core +kmod-ipt-compat-xtables +IPV6:kmod-ipv6
+Menu-Depends: 
+Provides: 
+Build-Depends: iptables
+Section: TP-LINK
+Category: TP-LINK iplatform apps
+Title: TARPIT netfilter module
+Maintainer: OpenWrt Developers Team <openwrt-devel@openwrt.org>
+Source: xtables-addons-1.45.tar.xz
+Type: ipkg
+Description: TARPIT netfilter module
+http://xtables-addons.sourceforge.net/
+OpenWrt Developers Team <openwrt-devel@openwrt.org>
+@@
+
+Package: iptaccount
+Submenu: xtables-addons
+Version: 1.45-3
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread iptables +iptables-mod-account
+Menu-Depends: 
+Provides: 
+Build-Depends: iptables
+Section: TP-LINK
+Category: TP-LINK iplatform apps
+Title: iptables-mod-account control utility
+Maintainer: OpenWrt Developers Team <openwrt-devel@openwrt.org>
+Source: xtables-addons-1.45.tar.xz
+Type: ipkg
+Description: iptables-mod-account control utility
+http://xtables-addons.sourceforge.net/
+OpenWrt Developers Team <openwrt-devel@openwrt.org>
+@@
+
+
+Source-Makefile: feeds/iplatform/miniupnpd/Makefile
+Package: miniupnpd
+Version: 1.8.20130426-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +iptables +libip4tc +IPV6:libip6tc +libnfnetlink
+Menu-Depends: 
+Provides: 
+Section: TP-LINK
+Category: TP-LINK iplatform apps
+Title: Lightweight UPnP daemon
+Maintainer: Daniel Dickinson <openwrt@cshore.neomailbox.net>
+Source: miniupnpd-1.8.20130426.tar.gz
+Type: ipkg
+Description: Lightweight UPnP daemon
+http://miniupnp.free.fr/
+Daniel Dickinson <openwrt@cshore.neomailbox.net>
+@@
+
+
+Source-Makefile: feeds/iplatform/sysstat/Makefile
+Package: sysstat
+Submenu: Debug
+Version: 10.1.7-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread 
+Menu-Depends: 
+Provides: 
+Section: TP-LINK
+Category: TP-LINK iplatform apps
+Title: Sysstat performance monitoring tools
+Maintainer: OpenWrt Developers Team <openwrt-devel@openwrt.org>
+Source: sysstat-10.1.7.tar.bz2
+Type: ipkg
+Description:   The sysstat utilities are a collection of performance monitoring tools for
+  Linux. These include sar, sadf, mpstat, iostat, pidstat and sa tools.
+http://pagesperso-orange.fr/sebastien.godard/index.html
+OpenWrt Developers Team <openwrt-devel@openwrt.org>
+@@
+
+
+Source-Makefile: feeds/iplatform/improxy/Makefile
+Package: improxy
+Submenu: Routing and Redirection
+Version: 1.0-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread 
+Menu-Depends: 
+Provides: 
+Section: TP-LINK
+Category: TP-LINK iplatform apps
+Title: Multicast Proxy for IGMP/MLD
+Maintainer: OpenWrt Developers Team <openwrt-devel@openwrt.org>
+Source: 
+Type: ipkg
+Description: 	Improxy is an IGMP/MLD Proxy daemon written in c for Linux. It is lightweight and do not depend on any thirdparty library.
+OpenWrt Developers Team <openwrt-devel@openwrt.org>
+@@
+
+
+Source-Makefile: feeds/iplatform/lzo/Makefile
+Package: liblzo
+Version: 2.06-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread 
+Menu-Depends: 
+Provides: 
+Build-Depends: libtool libintl libiconv
+Section: libs
+Category: TP-LINK iplatform apps
+Title: A real-time data compression library
+Maintainer: OpenWrt Developers Team <openwrt-devel@openwrt.org>
+Source: lzo-2.06.tar.gz
+Type: ipkg
+Description:  LZO is a data compression library which is suitable for data de-/compression
+ in real-time. This means it favours speed over compression ratio.
+http://www.oberhumer.com/opensource/lzo/
+OpenWrt Developers Team <openwrt-devel@openwrt.org>
+@@
+
+
+Source-Makefile: feeds/iplatform/pppd/Makefile
+Package: pppd
+Submenu: Network
+Version: 2.4.3-8
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +kmod-ppp +kmod-pptp +kmod-pppoe +resolveip
+Menu-Depends: 
+Provides: 
+Section: TP-LINK
+Category: TP-LINK iplatform apps
+Title: PPP daemon (PPPoE/PPTP/L2TP plugin included)
+Maintainer: OpenWrt Developers Team <openwrt-devel@openwrt.org>
+Source: 
+Type: ipkg
+Description: This package contains the PPP (Point-to-Point Protocol) daemon for PPPoE, L2TP and PPTP.
+OpenWrt Developers Team <openwrt-devel@openwrt.org>
+@@
+
+
+Source-Makefile: feeds/iplatform/ds-lite/Makefile
+Package: ds-lite
+Submenu: IPv6
+Version: 1-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +kmod-ipv6 +kmod-ip6-tunnel
+Menu-Depends: 
+Provides: 
+Section: ipv6
+Category: TP-LINK iplatform apps
+Title: Dual-Stack Lite (DS-Lite) configuration support Daemon
+Maintainer: Steven Barth <steven@midlink.org>
+Source: 
+Type: ipkg
+Description: Provides support for Dual-Stack Lite in /etc/config/network.
+Refer to http://wiki.openwrt.org/doc/uci/network for
+configuration details.
+Steven Barth <steven@midlink.org>
+@@
+
+
+Source-Makefile: feeds/iplatform/netifd/Makefile
+Package: netifd
+Submenu: Network
+Version: 2013-05-13-bc4a4bb127622c76085ecec7fd20448aad7bafaf
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libuci +libnl-tiny +libubus +ubus +ubusd +jshn +kmod-bonding +OPENAT:libopenat
+Menu-Depends: 
+Provides: 
+Section: base
+Category: TP-LINK iplatform apps
+Title: OpenWrt Network Interface Configuration Daemon
+Maintainer: OpenWrt Developers Team <openwrt-devel@openwrt.org>
+Source: netifd-2013-05-13-bc4a4bb127622c76085ecec7fd20448aad7bafaf.tar.gz
+Type: ipkg
+Description: OpenWrt Network Interface Configuration Daemon
+OpenWrt Developers Team <openwrt-devel@openwrt.org>
+@@
+
+
+Source-Makefile: feeds/iplatform/dropbear/Makefile
+Package: dropbear
+Version: 2015.67-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libuci
+Menu-Depends: 
+Provides: 
+Section: TP-LINK
+Category: TP-LINK iplatform apps
+Title: Small SSH2 client/server
+Maintainer: OpenWrt Developers Team <openwrt-devel@openwrt.org>
+Source: dropbear-2015.67.tar.bz2
+Type: ipkg
+Description:  A small SSH2 server/client designed for small memory environments.
+http://matt.ucc.asn.au/dropbear/
+OpenWrt Developers Team <openwrt-devel@openwrt.org>
+@@
+Config:
+	source "opensource/opensource/dropbear/Config.in"
+@@
+
+Package: dropbearconvert
+Version: 2015.67-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libuci
+Menu-Depends: 
+Provides: 
+Section: TP-LINK
+Category: TP-LINK iplatform apps
+Title: Utility for converting SSH keys
+Maintainer: OpenWrt Developers Team <openwrt-devel@openwrt.org>
+Source: dropbear-2015.67.tar.bz2
+Type: ipkg
+Description: Utility for converting SSH keys
+http://matt.ucc.asn.au/dropbear/
+OpenWrt Developers Team <openwrt-devel@openwrt.org>
+@@
+
+
+Source-Makefile: feeds/iplatform/mtd/Makefile
+Package: mtd
+Version: 20
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libubox
+Menu-Depends: 
+Provides: 
+Section: utils
+Category: TP-LINK iplatform apps
+Title: Update utility for trx firmware images
+Maintainer: OpenWrt Developers Team <openwrt-devel@openwrt.org>
+Source: 
+Type: ipkg
+Description:  This package contains an utility useful to upgrade from other firmware or 
+ older OpenWrt releases.
+OpenWrt Developers Team <openwrt-devel@openwrt.org>
+@@
+
+
+Source-Makefile: feeds/iplatform/swconfig/Makefile
+Package: swconfig
+Version: 10
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libuci +libnl-tiny
+Menu-Depends: 
+Provides: 
+Section: TP-LINK
+Category: TP-LINK iplatform apps
+Title: Switch configuration utility
+Maintainer: OpenWrt Developers Team <openwrt-devel@openwrt.org>
+Source: 
+Type: ipkg
+Description: Switch configuration utility
+OpenWrt Developers Team <openwrt-devel@openwrt.org>
+@@
+
+
+Source-Makefile: feeds/iplatform/pppoe-discovery/Makefile
+Package: pppoe-discovery
+Version: 3.8p
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread 
+Menu-Depends: 
+Provides: 
+Section: TP-LINK
+Category: TP-LINK iplatform apps
+Title: pppoe discovery
+Maintainer: Ye Qianchuan <yeqianchuan@tp-link.net>
+Source: 
+Type: ipkg
+Description: pppoe discovery
+Ye Qianchuan <yeqianchuan@tp-link.net>
+@@
+
+
+Source-Makefile: feeds/iplatform/fstools/Makefile
+Package: fstools
+Version: 2015-02-25-4b68e9f9ea894bf58d31e26ca5ed92c81b1a115e
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +ubox
+Menu-Depends: 
+Provides: 
+Section: TP-LINK
+Category: TP-LINK iplatform apps
+Title: OpenWrt filesystem tools
+Maintainer: OpenWrt Developers Team <openwrt-devel@openwrt.org>
+Source: fstools-2015-02-25-4b68e9f9ea894bf58d31e26ca5ed92c81b1a115e.tar.gz
+Type: ipkg
+Description: OpenWrt filesystem tools
+OpenWrt Developers Team <openwrt-devel@openwrt.org>
+@@
+
+Package: ubi-flash
+Version: 2015-02-25-4b68e9f9ea894bf58d31e26ca5ed92c81b1a115e
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread 
+Menu-Depends: 
+Provides: 
+Section: TP-LINK
+Category: TP-LINK iplatform apps
+Title: OpenWrt ubi flashing tool
+Maintainer: OpenWrt Developers Team <openwrt-devel@openwrt.org>
+Source: fstools-2015-02-25-4b68e9f9ea894bf58d31e26ca5ed92c81b1a115e.tar.gz
+Type: ipkg
+Description: OpenWrt ubi flashing tool
+OpenWrt Developers Team <openwrt-devel@openwrt.org>
+@@
+
+Package: block-mount
+Version: 2015-02-25-4b68e9f9ea894bf58d31e26ca5ed92c81b1a115e
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +ubox +libubox +libuci
+Menu-Depends: 
+Provides: 
+Section: TP-LINK
+Category: TP-LINK iplatform apps
+Title: Block device mounting and checking
+Maintainer: OpenWrt Developers Team <openwrt-devel@openwrt.org>
+Source: fstools-2015-02-25-4b68e9f9ea894bf58d31e26ca5ed92c81b1a115e.tar.gz
+Type: ipkg
+Description: Block device mounting and checking
+OpenWrt Developers Team <openwrt-devel@openwrt.org>
+@@
+
+
+Source-Makefile: feeds/iplatform/procd/Makefile
+Package: procd
+Version: 2015-10-29.1-d5fddd91b966424bb63e943e789704d52382cc18
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +ubusd +ubus +libjson-script +ubox +USE_GLIBC:librt +libubox +libubus +NAND_SUPPORT:procd-nand
+Menu-Depends: 
+Provides: 
+Section: TP-LINK
+Category: TP-LINK iplatform apps
+Title: OpenWrt system process manager
+Maintainer: OpenWrt Developers Team <openwrt-devel@openwrt.org>
+Source: procd-2015-10-29.1-d5fddd91b966424bb63e943e789704d52382cc18.tar.gz
+Type: ipkg
+Description: OpenWrt system process manager
+OpenWrt Developers Team <openwrt-devel@openwrt.org>
+@@
+Config:
+menu "Configuration"
+	depends on PACKAGE_procd
+
+config PROCD_SHOW_BOOT
+	bool
+	default n
+	prompt "Print the shutdown to the console as well as logging it to syslog"
+
+config PROCD_ZRAM_TMPFS
+	bool
+	default n
+	prompt "Mount /tmp using zram."
+endmenu
+@@
+
+Package: procd-ujail
+Version: 2015-10-29.1-d5fddd91b966424bb63e943e789704d52382cc18
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread @KERNEL_NAMESPACES +@KERNEL_UTS_NS +@KERNEL_IPC_NS +@KERNEL_PID_NS +libubox +libblobmsg-json
+Menu-Depends: 
+Provides: 
+Section: TP-LINK
+Category: TP-LINK iplatform apps
+Title: OpenWrt process jail helper
+Maintainer: OpenWrt Developers Team <openwrt-devel@openwrt.org>
+Source: procd-2015-10-29.1-d5fddd91b966424bb63e943e789704d52382cc18.tar.gz
+Type: ipkg
+Description: OpenWrt process jail helper
+OpenWrt Developers Team <openwrt-devel@openwrt.org>
+@@
+
+Package: procd-seccomp
+Version: 2015-10-29.1-d5fddd91b966424bb63e943e789704d52382cc18
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread @arm||@armeb||@mips||@mipsel||@i386||@x86_64 @!TARGET_uml @KERNEL_SECCOMP +libubox +libblobmsg-json
+Menu-Depends: 
+Provides: 
+Section: TP-LINK
+Category: TP-LINK iplatform apps
+Title: OpenWrt process seccomp helper + utrace
+Maintainer: OpenWrt Developers Team <openwrt-devel@openwrt.org>
+Source: procd-2015-10-29.1-d5fddd91b966424bb63e943e789704d52382cc18.tar.gz
+Type: ipkg
+Description: OpenWrt process seccomp helper + utrace
+OpenWrt Developers Team <openwrt-devel@openwrt.org>
+@@
+
+Package: procd-nand
+Version: 2015-10-29.1-d5fddd91b966424bb63e943e789704d52382cc18
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread @NAND_SUPPORT +ubi-utils
+Menu-Depends: 
+Provides: 
+Section: TP-LINK
+Category: TP-LINK iplatform apps
+Title: OpenWrt sysupgrade nand helper
+Maintainer: OpenWrt Developers Team <openwrt-devel@openwrt.org>
+Source: procd-2015-10-29.1-d5fddd91b966424bb63e943e789704d52382cc18.tar.gz
+Type: ipkg
+Description: OpenWrt sysupgrade nand helper
+OpenWrt Developers Team <openwrt-devel@openwrt.org>
+@@
+
+Package: procd-nand-firstboot
+Version: 2015-10-29.1-d5fddd91b966424bb63e943e789704d52382cc18
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread procd-nand
+Menu-Depends: 
+Provides: 
+Section: TP-LINK
+Category: TP-LINK iplatform apps
+Title: OpenWrt firstboot nand helper
+Maintainer: OpenWrt Developers Team <openwrt-devel@openwrt.org>
+Source: procd-2015-10-29.1-d5fddd91b966424bb63e943e789704d52382cc18.tar.gz
+Type: ipkg
+Description: OpenWrt firstboot nand helper
+OpenWrt Developers Team <openwrt-devel@openwrt.org>
+@@
+
+
+Source-Makefile: feeds/iplatform/iputils/Makefile
+Package: iputils-ping6
+Submenu: IPv6
+Version: 20101006-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +PACKAGE_libopenssl:libopenssl +PACKAGE_libwolfssl:libwolfssl
+Menu-Depends: 
+Provides: 
+Section: ipv6
+Category: TP-LINK iplatform apps
+Title: iputils ping6
+Maintainer: OpenWrt Developers Team <openwrt-devel@openwrt.org>
+Source: 
+Type: ipkg
+Description: 	ping6 is a icmp tool for IPv6.
+OpenWrt Developers Team <openwrt-devel@openwrt.org>
+@@
+
+
+Source-Makefile: feeds/iplatform/strace/Makefile
+Package: strace
+Submenu: Debug
+Version: 4.7-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread 
+Menu-Depends: 
+Provides: 
+Section: TP-LINK
+Category: TP-LINK iplatform apps
+Title: System call tracer
+Maintainer: OpenWrt Developers Team <openwrt-devel@openwrt.org>
+Source: strace-4.7.tar.xz
+Type: ipkg
+Description: A useful diagnostic, instructional, and debugging tool. Allows you to track what
+system calls a program makes while it is running.
+http://strace.sourceforge.net/
+OpenWrt Developers Team <openwrt-devel@openwrt.org>
+@@
+
+
+Source-Makefile: feeds/iplatform/xl2tpd/Makefile
+Package: xl2tpd
+Submenu: Network
+Version: 1.1.12-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread pppd +kmod-pppol2tp +kmod-ppp +ip +resolveip
+Menu-Depends: 
+Provides: 
+Section: TP-LINK
+Category: TP-LINK iplatform apps
+Title: An L2TP (Layer 2 Tunneling Protocol) daemon
+Maintainer: OpenWrt Developers Team <openwrt-devel@openwrt.org>
+Source: 
+Type: ipkg
+Description: l2tpd is the open source implementation of the L2TP tunneling protocol (RFC2661).
+It does implement both LAC and LNS role in a L2TP networking architecture. The
+main goal of this protocol is to tunnel PPP frame trough an IP network.
+OpenWrt Developers Team <openwrt-devel@openwrt.org>
+@@
+
+
+Source-Makefile: feeds/iplatform/libssh/Makefile
+Package: libssh
+Version: 0.7.3-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libpthread +librt +zlib +libopenssl
+Menu-Depends: 
+Provides: 
+Section: TP-LINK
+Category: TP-LINK iplatform apps
+Title: SSH library
+Maintainer: Luka Perkov <luka@openwrt.org>
+Source: 
+Type: ipkg
+Description:  libssh is a mulitplatform C library implementing the SSHv2 and SSHv1 protocol
+ for client and server implementations.
+http://www.libssh.org/
+Luka Perkov <luka@openwrt.org>
+@@
+
+
+Source-Makefile: feeds/iplatform/base-files/Makefile
+Package: base-files
+Version: 157.2-
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +netifd +procd +jsonfilter +SIGNED_PACKAGES:usign
+Menu-Depends: 
+Provides: 
+Build-Depends: opkg/host 
+Section: base
+Category: TP-LINK iplatform apps
+Title: Base filesystem for OpenWrt
+Maintainer: OpenWrt Developers Team <openwrt-devel@openwrt.org>
+Source: 
+Type: ipkg
+Description:  This package contains a base filesystem and system scripts for OpenWrt.
+http://openwrt.org/
+OpenWrt Developers Team <openwrt-devel@openwrt.org>
+@@
+
+
+Source-Makefile: feeds/iplatform/libdaemon/Makefile
+Package: libdaemon
+Version: 0.14-2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread 
+Menu-Depends: 
+Provides: 
+Build-Depends: libtool libintl libiconv
+Section: TP-LINK
+Category: TP-LINK iplatform apps
+Title: A lightweight C library that eases the writing of UNIX daemons
+Maintainer: OpenWrt Developers Team <openwrt-devel@openwrt.org>
+Source: libdaemon-0.14.tar.gz
+Type: ipkg
+Description: 	libdaemon is a lightweight C library that eases the writing of UNIX daemons.
+	It consists of the following parts:
+	- A wrapper around fork() which does the correct daemonization procedure of a process
+	- A wrapper around syslog() for simpler and compatible log output to Syslog or STDERR
+	- An API for writing PID files
+	- An API for serializing UNIX signals into a pipe for usage with select() or poll()
+	- An API for running subprocesses with STDOUT and STDERR redirected to syslog
+
+	APIs like these are used in most daemon software available. It is not that
+	simple to get it done right and code duplication is not a goal.
+http://0pointer.de/lennart/projects/libdaemon/
+OpenWrt Developers Team <openwrt-devel@openwrt.org>
+@@
+
+
+Source-Makefile: feeds/iplatform/luasocket/Makefile
+Package: luasocket
+Submenu: administration
+Version: 2.0.2-3
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +lua
+Menu-Depends: 
+Provides: 
+Section: TP-LINK
+Category: TP-LINK iplatform apps
+Title: LuaSocket
+Maintainer: OpenWrt Developers Team <openwrt-devel@openwrt.org>
+Source: luasocket-2.0.2.tar.gz
+Type: ipkg
+Description:   LuaSocket is the most comprehensive networking support
+  library for the Lua language. It provides easy access to
+  TCP, UDP, DNS, SMTP, FTP, HTTP, MIME and much more.
+http://luasocket.luaforge.net/
+OpenWrt Developers Team <openwrt-devel@openwrt.org>
+@@
+
+
+Source-Makefile: feeds/iplatform/openssl/Makefile
+Package: libopenssl
+Menu: 1
+Submenu: SSL
+Version: 1.0.2d-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +zlib
+Menu-Depends: 
+Provides: 
+Build-Depends: ocf-crypto-headers
+Section: TP-LINK
+Category: TP-LINK iplatform apps
+Title: Open source SSL toolkit (libraries)
+Maintainer: OpenWrt Developers Team <openwrt-devel@openwrt.org>
+Source: openssl-1.0.2d.tar.gz
+Type: ipkg
+Description: The OpenSSL Project is a collaborative effort to develop a robust,
+commercial-grade, full-featured, and Open Source toolkit implementing the Secure
+Sockets Layer (SSL v2/v3) and Transport Layer Security (TLS v1) protocols as well
+as a full-strength general purpose cryptography library.
+This package contains the OpenSSL shared libraries, needed by other programs.
+http://www.openssl.org/
+OpenWrt Developers Team <openwrt-devel@openwrt.org>
+@@
+Config:
+source "opensource/opensource/openssl/Config.in"
+@@
+
+Package: openssl-util
+Version: 1.0.2d-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libopenssl
+Menu-Depends: 
+Provides: 
+Build-Depends: ocf-crypto-headers
+Section: TP-LINK
+Category: TP-LINK iplatform apps
+Title: Open source SSL toolkit (utility)
+Maintainer: OpenWrt Developers Team <openwrt-devel@openwrt.org>
+Source: openssl-1.0.2d.tar.gz
+Type: ipkg
+Description: The OpenSSL Project is a collaborative effort to develop a robust,
+commercial-grade, full-featured, and Open Source toolkit implementing the Secure
+Sockets Layer (SSL v2/v3) and Transport Layer Security (TLS v1) protocols as well
+as a full-strength general purpose cryptography library.
+This package contains the OpenSSL command-line utility.
+http://www.openssl.org/
+OpenWrt Developers Team <openwrt-devel@openwrt.org>
+@@
+
+
+Source-Makefile: feeds/iplatform/ubox/Makefile
+Package: ubox
+Version: 2014-03-27-1d9d2e6ae99c9ba72d1bc40e554d5f422c9b9196
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libubox +ubusd +ubus +libuci
+Menu-Depends: 
+Provides: 
+Section: TP-LINK
+Category: TP-LINK iplatform apps
+Title: OpenWrt system helper toolbox
+Maintainer: OpenWrt Developers Team <openwrt-devel@openwrt.org>
+Source: ubox-2014-03-27-1d9d2e6ae99c9ba72d1bc40e554d5f422c9b9196.tar.gz
+Type: ipkg
+Description: OpenWrt system helper toolbox
+OpenWrt Developers Team <openwrt-devel@openwrt.org>
+@@
+
+
+Source-Makefile: feeds/iplatform/tcpdump/Makefile
+Package: tcpdump
+Version: 4.5.1-4
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libpcap
+Menu-Depends: 
+Provides: 
+Build-Variant: full
+Section: TP-LINK
+Category: TP-LINK iplatform apps
+Title: Network monitoring and data acquisition tool
+Maintainer: OpenWrt Developers Team <openwrt-devel@openwrt.org>
+Source: 
+Type: ipkg
+Description: Network monitoring and data acquisition tool
+http://www.tcpdump.org/
+OpenWrt Developers Team <openwrt-devel@openwrt.org>
+@@
+
+Package: tcpdump-mini
+Version: 4.5.1-4
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libpcap
+Menu-Depends: 
+Provides: 
+Build-Variant: mini
+Section: TP-LINK
+Category: TP-LINK iplatform apps
+Title: Network monitoring and data acquisition tool (minimal version)
+Maintainer: OpenWrt Developers Team <openwrt-devel@openwrt.org>
+Source: 
+Type: ipkg
+Description: Network monitoring and data acquisition tool (minimal version)
+http://www.tcpdump.org/
+OpenWrt Developers Team <openwrt-devel@openwrt.org>
+@@
+
+
+Source-Makefile: feeds/iplatform/6rd/Makefile
+Package: 6rd
+Submenu: IPv6
+Version: 2-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +kmod-ipv6 +kmod-sit
+Menu-Depends: 
+Provides: 
+Section: ipv6
+Category: TP-LINK iplatform apps
+Title: 6rd configuration support Daemon
+Maintainer: Stéphan Kochen <stephan@kochen.nl>
+Source: 
+Type: ipkg
+Description: Provides support for 6rd tunnels in /etc/config/network.
+Refer to http://wiki.openwrt.org/doc/uci/network for
+configuration details.
+Stéphan Kochen <stephan@kochen.nl>
+@@
+
+
+Source-Makefile: feeds/iplatform/resolveip/Makefile
+Package: resolveip
+Submenu: Base system
+Version: 2
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread 
+Menu-Depends: 
+Provides: 
+Section: TP-LINK
+Category: TP-LINK iplatform apps
+Title: Simple DNS resolver with configurable timeout
+Maintainer: OpenWrt Developers Team <openwrt-devel@openwrt.org>
+Source: 
+Type: ipkg
+Description:  This package contains the small resolveip utility which
+ can be used by scripts to turn host names into numeric
+ IP addresses. It supports IPv4 and IPv6 resolving and
+ has a configurable timeout to guarantee a certain maximum
+ runtime in case of slow or defunct DNS servers.
+OpenWrt Developers Team <openwrt-devel@openwrt.org>
+@@
+
+
+Source-Makefile: feeds/iplatform/zlib/Makefile
+Package: zlib
+Version: 1.2.8-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread 
+Menu-Depends: 
+Provides: 
+Section: TP-LINK
+Category: TP-LINK iplatform apps
+Title: Library implementing the deflate compression method
+Maintainer: OpenWrt Developers Team <openwrt-devel@openwrt.org>
+Source: 
+Type: ipkg
+Description: Library implementing the deflate compression method
+http://www.zlib.net/
+OpenWrt Developers Team <openwrt-devel@openwrt.org>
+@@
+
+
+Source-Makefile: feeds/iplatform/firewall/Makefile
+Package: firewall
+Version: 2-55.1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +iptables +kmod-ipt-conntrack +kmod-ipt-nat
+Menu-Depends: 
+Provides: 
+Section: net
+Category: TP-LINK iplatform apps
+Title: OpenWrt firewall
+Maintainer: Jo-Philipp Wich <xm@subsignal.org>
+Source: 
+Type: ipkg
+Description:  UCI based firewall for OpenWrt
+http://openwrt.org/
+Jo-Philipp Wich <xm@subsignal.org>
+@@
+
+
+Source-Makefile: feeds/iplatform/libnl-tiny/Makefile
+Package: libnl-tiny
+Version: 0.1-3
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread 
+Menu-Depends: 
+Provides: 
+Section: TP-LINK
+Category: TP-LINK iplatform apps
+Title: netlink socket library
+Maintainer: OpenWrt Developers Team <openwrt-devel@openwrt.org>
+Source: 
+Type: ipkg
+Description:  This package contains a stripped down version of libnl
+OpenWrt Developers Team <openwrt-devel@openwrt.org>
+@@
+
+
+Source-Makefile: feeds/iplatform/bridge-utils/Makefile
+Package: bridge
+Version: 1.5-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread 
+Menu-Depends: 
+Provides: 
+Section: TP-LINK
+Category: TP-LINK iplatform apps
+Title: Ethernet bridging configuration utility
+Maintainer: OpenWrt Developers Team <openwrt-devel@openwrt.org>
+Source: bridge-utils-1.5.tar.gz
+Type: ipkg
+Description:  Manage ethernet bridging: a way to connect networks together to 
+ form a larger network.
+http://bridge.sourceforge.net/
+OpenWrt Developers Team <openwrt-devel@openwrt.org>
+@@
+
+

@@ -1,0 +1,47 @@
+Source-Makefile: feeds/iplatform/fstools/Makefile
+Package: fstools
+Version: 2015-02-25-4b68e9f9ea894bf58d31e26ca5ed92c81b1a115e
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +ubox
+Menu-Depends: 
+Provides: 
+Section: TP-LINK
+Category: TP-LINK iplatform apps
+Title: OpenWrt filesystem tools
+Maintainer: OpenWrt Developers Team <openwrt-devel@openwrt.org>
+Source: fstools-2015-02-25-4b68e9f9ea894bf58d31e26ca5ed92c81b1a115e.tar.gz
+Type: ipkg
+Description: OpenWrt filesystem tools
+OpenWrt Developers Team <openwrt-devel@openwrt.org>
+@@
+
+Package: ubi-flash
+Version: 2015-02-25-4b68e9f9ea894bf58d31e26ca5ed92c81b1a115e
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread 
+Menu-Depends: 
+Provides: 
+Section: TP-LINK
+Category: TP-LINK iplatform apps
+Title: OpenWrt ubi flashing tool
+Maintainer: OpenWrt Developers Team <openwrt-devel@openwrt.org>
+Source: fstools-2015-02-25-4b68e9f9ea894bf58d31e26ca5ed92c81b1a115e.tar.gz
+Type: ipkg
+Description: OpenWrt ubi flashing tool
+OpenWrt Developers Team <openwrt-devel@openwrt.org>
+@@
+
+Package: block-mount
+Version: 2015-02-25-4b68e9f9ea894bf58d31e26ca5ed92c81b1a115e
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +ubox +libubox +libuci
+Menu-Depends: 
+Provides: 
+Section: TP-LINK
+Category: TP-LINK iplatform apps
+Title: Block device mounting and checking
+Maintainer: OpenWrt Developers Team <openwrt-devel@openwrt.org>
+Source: fstools-2015-02-25-4b68e9f9ea894bf58d31e26ca5ed92c81b1a115e.tar.gz
+Type: ipkg
+Description: Block device mounting and checking
+OpenWrt Developers Team <openwrt-devel@openwrt.org>
+@@
+
+

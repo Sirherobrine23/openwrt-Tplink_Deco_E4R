@@ -1,0 +1,6 @@
+| 用例名称 | 前置测试条件 | 操作步骤 | 预期结果 |
+|:-----|:-----|:-----|:-----|
+| 开启vlan功能，设置vlan id | 1. DUT处于非RE模式 | 1. 在DECO串口下通过指令  echo '{"params":{"vlan":{"enable":true, "isp_name":"cmcc", "id":10}}}' &#124; tmpcli -o 0x420e  开启vlan | 1.成功打开，"cat  /etc/config/network"  可以看到vlan的section，其中vlan.enable=1,并且vlan.id为所设置的id.<br>2."ifconfig"可以看到新增了一个br-wan.x（x为设置的vlan id）的设备.<br>3.“cat /etc/vlan.d/vlan”  可以看到wan与lan的物理端口vlan划分，其中wan的vlan id为所设置的id.<br>|
+| 关闭vlan功能  | 1. DUT处于非RE模式  | 1. 在DECO串口下通过指令  echo '{"params":{"vlan":{"enable":false}}}' &#124; tmpcli -o 0x420e 关闭vlan   | 1. 成功关闭后，"cat  /etc/config/network"  可以看到vlan的section，其中vlan.enable=0. <br>2."ifconfig"可以看到br-wan.x（x为设置的vlan id）的设备已经被删除.| 
+| 查看vlan功能  | 1. DUT处于非RE模式  | 1. 在DECO串口下通过指令  tmpcli -o 0x420d 查看vlan状态   | 1. 若vlan打开，则返回vlan.enable=true，以及对应的vlan.isp_name，vlan.id等vlan信息 <br>2.若vlan关闭，则只返回vlan.enable=false.| 
+| 测试vlan是否生效  | 1. DUT处于非RE模式.<br>2. DUT开启vlan功能，vlan id为10. <br>3. 测试拓扑:一台提供dhcp server功能的设备，一台交换机 | 1. 将DUT与dhcp server设备分别连接到交换机的两个端口上<br>2.  配置交换机的vlan功能，选择两个端口(或者更多端口)加入vlan 10，其中与dhcp server连接的端口设为untagged port，与DUT连接的端口设为tagged port<br>3. 设置端口PVID：与dhcp server连接的端口PVID设为10，与DUT连接的端口PVID任意设置<br>4. DUT的lan端连接PC或者其他设备. | 1.DUT成功拨号， ifconfig 查看br-wan.10获取ip地址，dhcp server能够ping通. <br>2. 在DUT的lan端设备上可正确获取地址，并且ping通dhcp server.| 

@@ -1,0 +1,54 @@
+#this shell is to make device in /dev directory, because all devices made by util/mkdev.new will be overwrite by early_mounts in procd. and early_dev in procd will create a lot of devices base on /sys/dev/ directory.
+
+#so this shell will just create devices which not created by early_dev but created by mkdev.new before.
+
+mknod $TMP_ROOTFS/dev/ar7100_flash_chrdev		c	239  	0	
+mknod $TMP_ROOTFS/dev/ar7100_gpio_chrdev		c	238  	0	
+#mknod $TMP_ROOTFS/dev/caldata		c	90	18
+mknod $TMP_ROOTFS/dev/dk0			c	63	0
+mknod $TMP_ROOTFS/dev/kmem			c	1	2
+mknod $TMP_ROOTFS/dev/mtdr0		c	90	1
+mknod $TMP_ROOTFS/dev/ptyp0		c	2	0
+mknod $TMP_ROOTFS/dev/ptyp1		c	2	1
+mknod $TMP_ROOTFS/dev/ptyp2		c	2	2
+mknod $TMP_ROOTFS/dev/ram0		b	1	0
+mknod $TMP_ROOTFS/dev/tty0		c	4	0
+mknod $TMP_ROOTFS/dev/tty1		c	4	1
+mknod $TMP_ROOTFS/dev/tty2		c	4	2
+mknod $TMP_ROOTFS/dev/ttyS2		c	4	66
+mknod $TMP_ROOTFS/dev/ttyp0		c	3	0
+mknod $TMP_ROOTFS/dev/ttyp1		c	3	1
+mknod $TMP_ROOTFS/dev/ttyp2		c	3	2
+mknod $TMP_ROOTFS/dev/ttyUSB0	c	188	0
+mknod $TMP_ROOTFS/dev/ttyUSB1	c	188	1
+mknod $TMP_ROOTFS/dev/ttyUSB2	c	188	2
+mknod $TMP_ROOTFS/dev/ttyUSB3	c	188	3
+mknod $TMP_ROOTFS/dev/ttyUSB4	c	188	4
+mknod $TMP_ROOTFS/dev/ttyUSB5	c	188	5
+mknod $TMP_ROOTFS/dev/ttyUSB6	c	188	6
+mknod $TMP_ROOTFS/dev/ttyUSB7	c	188	7
+mknod $TMP_ROOTFS/dev/ttyUSB8	c	188	8
+mknod $TMP_ROOTFS/dev/ttyUSB9	c	188	9
+mknod $TMP_ROOTFS/dev/ttyUSB10	c	188	10
+mknod $TMP_ROOTFS/dev/ttyUSB11	c	188	11
+mknod $TMP_ROOTFS/dev/ttyUSB12	c	188	12
+mknod $TMP_ROOTFS/dev/ttyUSB13	c	188	13
+mknod $TMP_ROOTFS/dev/ttyUSB14	c	188	14
+mknod $TMP_ROOTFS/dev/ttyUSB15	c	188	15
+#added by ZQQ,10.10.23 added dev nod for ACM devices
+mknod $TMP_ROOTFS/dev/ttyACM0	c	166	0
+mknod $TMP_ROOTFS/dev/ttyACM1	c	166	1
+mknod $TMP_ROOTFS/dev/ttyACM2	c	166	2
+mknod $TMP_ROOTFS/dev/ttyACM3	c	166	3
+mknod $TMP_ROOTFS/dev/ttyACM4	c	166	4
+mknod $TMP_ROOTFS/dev/ttyACM5	c	166	5
+mknod $TMP_ROOTFS/dev/ttyACM6	c	166	6
+mknod $TMP_ROOTFS/dev/ttyACM7	c	166	7
+mknod $TMP_ROOTFS/dev/ttyACM8	c	166	8
+mknod $TMP_ROOTFS/dev/ttyACM9	c	166	9
+mknod $TMP_ROOTFS/dev/ttyACM10	c	166	10
+mknod $TMP_ROOTFS/dev/ttyACM11	c	166	11
+mknod $TMP_ROOTFS/dev/ttyACM12	c	166	12
+mknod $TMP_ROOTFS/dev/ttyACM13	c	166	13
+mknod $TMP_ROOTFS/dev/ttyACM14	c	166	14
+mknod $TMP_ROOTFS/dev/ttyACM15	c	166	15

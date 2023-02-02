@@ -1,0 +1,73 @@
+#!/bin/sh
+
+. /lib/functions.sh
+
+#delete_br_wan_device() {
+#	local sec_name="$1"
+#	local id=""
+#	id="$(uci get network.vlan.id)"
+#	config_get name "$1" name
+#	if [ "$name" == "br-wan.""$id" ];then
+#		uci delete network."$sec_name"
+#	fi
+#}
+#delete_lan_device() {
+#    sec_name="$1"
+#	config_get name "$1" name
+#	if [ "$name" == "eth0.4094" -o "$name" == "eth1.4094" ];then
+#		uci delete network."$sec_name"
+#	fi
+#}
+#reset_vlan_conf(){
+#    uci -c /etc/vlan.d set vlan.@switch_vlan[0].vid="1"
+#	uci -c /etc/vlan.d set vlan.@switch_vlan[0].ports="0t 1 2 3 4"
+#	uci -c /etc/vlan.d set vlan.@switch_vlan[1].vid=$vlan_id
+#	uci -c /etc/vlan.d set vlan.@switch_vlan[1].ports="0t 4t 5t"
+#    uci commit -c /etc/vlan.d
+#   swconfig dev switch0 load /etc/vlan.d/vlan
+#}
+#create_wanif(){
+#    local id=""
+#    local macaddr=""
+#    local sec=""
+#    id="$(uci get network_sync.vlan.id)"
+#    macaddr="$(uci get network.wan.macaddr)"
+#    sec="$(uci add network device)"
+#
+#    uci set network."$sec".enabled="1"
+#    uci set network."$sec".name="br-wan.""$id"
+#    uci set network."$sec".macaddr="$macaddr"
+#}
+
+[ "$POINT" == "END" ] || exit 0;
+
+config_load network
+
+if [ "$SRCMODE" = "NONE" -o "$SRCMODE" = "RE" ] && [ "$DSTMODE" = "FAP" -o "$DSTMODE" = "HAP" ]; then
+    data="$(uci get network_sync.wan.ipaddr)"
+	[ "$data" ] && {
+        uci set network.wan.ipaddr="$data"
+    }
+    #vlan_status=$(uci get network.vlan.enable)
+    #[ "$vlan_status" == "1" ] && {
+    #    create_wanif
+    #}
+elif [ "$SRCMODE" = "NONE" -o "$SRCMODE" = "FAP" -o "$SRCMODE" = "HAP" ] && [ "$DSTMODE" = "RE" ]; then
+    data="$(uci get network.wan.ipaddr)"
+	[ "$data" ] && {
+        uci delete network.wan.ipaddr
+    }
+#    lan_ifname="$(uci get network.lan.ifname)"
+#    [ "$lan_ifname" != "eth0 eth1" ] && {
+#		config_foreach delete_lan_device device
+#       uci set network.lan.ifname="eth0 eth1"
+#    }
+#    config_foreach delete_br_wan_device device
+
+#    vlan_status=$(uci get network.vlan.enable)
+#    [ "$vlan_status" == "1" ] && {
+#        reset_vlan_conf
+#    }
+fi
+uci commit network
+/etc/init.d/network reload

@@ -1,0 +1,40 @@
+Source-Makefile: feeds/iplatform/radvd/Makefile
+Package: radvd
+Submenu: IPv6
+Version: 1.7-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +kmod-ipv6 +libdaemon +IFADDRS:libifaddrs
+Menu-Depends: 
+Provides: 
+Section: ipv6
+Category: TP-LINK iplatform apps
+Title: IPv6 Routing Advertisement Daemon
+Maintainer: OpenWrt Developers Team <openwrt-devel@openwrt.org>
+Source: 
+Type: ipkg
+Description: radvd is the router advertisement daemon for IPv6. It listens to router
+solicitations and sends router advertisements as described in "Neighbor
+Discovery for IP Version 6 (IPv6)" (RFC 4861).  With these advertisements hosts
+can automatically configure their addresses and some other parameters. They also
+can choose a default router based on these advertisements.
+OpenWrt Developers Team <openwrt-devel@openwrt.org>
+@@
+
+Package: radvdump
+Submenu: IPv6
+Version: 1.7-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +kmod-ipv6 +libdaemon +IFADDRS:libifaddrs
+Menu-Depends: 
+Provides: 
+Section: ipv6
+Category: TP-LINK iplatform apps
+Title: IPv6 Routing Advertisement Dumper
+Maintainer: OpenWrt Developers Team <openwrt-devel@openwrt.org>
+Source: 
+Type: ipkg
+Description: radvdump prints out the contents of incoming router advertisements sent by radvd
+or some other software implementing (parts of) "Neighbor Discovery for IP
+Version 6 (IPv6)" (RFC 4861).
+OpenWrt Developers Team <openwrt-devel@openwrt.org>
+@@
+
+

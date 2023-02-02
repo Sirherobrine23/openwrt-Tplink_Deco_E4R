@@ -1,0 +1,85 @@
+#!/usr/bin/lua
+
+local sys    = require "luci.sys"
+local dbg   = require "luci.tools.debug"
+local uci   = require "luci.model.uci"
+local uci_r = uci.cursor()
+
+function _print_tbl(data)
+    if type(data) == "table" then
+        for i, v in pairs(data) do
+            dbg.print(i .. " = " .. tostring(data[i]))
+            if type(data[i]) == "table" then
+                _print_tbl(data[i])         
+            end
+        end
+    end
+end
+
+
+local ap_2g
+local ap_5g
+local mode
+if arg[1] == "2g" then
+    ap_2g = {}
+    ap_2g.ssid = arg[2]
+    ap_2g.key = arg[3] 
+elseif arg[1] == "5g" then
+    ap_5g = {}
+    ap_5g.ssid = arg[2]
+    ap_5g.key = arg[3]
+elseif arg[1] == "mode" then
+    mode = arg[2]
+else
+    dbg.print("Usage: setwifi 2g/5g ssid pwd")
+    dbg.print("       setwifi mode test/normal")
+    os.exit(0)
+end
+
+-- set mode
+if mode then
+    local test = {}
+    if mode == "test" then
+        test.test_mode = "1"
+    else
+        test.test_mode = "0"
+    end
+    uci_r:section("wireless", "wifi-test", "test", test)
+end
+
+-- set 2g/5g
+uci_r:foreach("wireless", "wifi-iface",
+        function(section) 
+            if  ap_2g and section.vapname == "ath0"  then
+				-- host, 2.4g
+                dbg.print("set 2g ssid=" .. ap_2g.ssid .. " pwd=" .. ap_2g.key)                			
+                uci_r:section("wireless", "wifi-iface", section[".name"], ap_2g)
+			elseif ap_5g and section.vapname == "ath1"  then
+				-- host, 5g
+				dbg.print("set 5g ssid=" .. ap_5g.ssid .. " pwd=" .. ap_5g.key)                         
+                uci_r:section("wireless", "wifi-iface", section[".name"], ap_5g)
+			elseif gst_2g and section.vapname == "ath01"  then
+				-- guest, 2.4g
+                dbg.print("set 2g ssid=" .. ap_2g.ssid .. " pwd=" .. ap_2g.key)                         
+                uci_r:section("wireless", "wifi-iface", section[".name"], gst_2g)
+			elseif gst_5g and section.vapname == "ath01"  then
+				-- guest, 5g	
+                dbg.print("set 5g ssid=" .. ap_5g.ssid .. " pwd=" .. ap_5g.key)                         
+                uci_r:section("wireless", "wifi-iface", section[".name"], gst_5g)		 
+            elseif ap_2g and section.vapname == "ath02"  then
+				--- host, 2.4g
+                dbg.print("set 2g ssid=" .. ap_2g.ssid .. " pwd=" .. ap_2g.key)                         
+                uci_r:section("wireless", "wifi-iface", section[".name"], ap_2g)
+			elseif ap_5g and section.vapname == "ath12"  then
+				-- host, 5g
+                dbg.print("set 5g ssid=" .. ap_5g.ssid .. " pwd=" .. ap_5g.key)                         
+                uci_r:section("wireless", "wifi-iface", section[".name"], ap_5g)
+			end			
+        end
+    )    
+
+uci_r:commit("wireless")
+
+if ap_2g or ap_5g then
+    sys.fork_exec("wifi") 
+end

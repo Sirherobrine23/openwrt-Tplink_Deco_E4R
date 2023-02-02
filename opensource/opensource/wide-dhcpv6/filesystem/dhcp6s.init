@@ -1,0 +1,120 @@
+#!/bin/sh /etc/rc.common
+# Copyright (C) 2010-2012 OpenWrt.org
+
+SERVICE_USE_PID=1
+pid_file=/var/run/dhcp6s.pid
+
+start() {
+	[ ! -e /etc/dhcp6sctlkey ] && `dd if=/dev/urandom count=1 2> /dev/null | md5sum | cut -d" " -f1 > /etc/dhcp6sctlkey`
+
+#	[ -e $pid_file ] && return 0
+
+        local dhc=`ps|grep dhcp6s | grep -v "grep"|wc -l`
+        if [ ${dhc} -eq 1 ];then
+                return 0
+        else
+                echo "dhcp6s is not running, delete pid_file: rm $pid_file" > /dev/console
+                rm "$pid_file"
+        fi
+
+	[ ! -f /tmp/dns_flag ] && echo 1 > /tmp/dns_flag
+
+	. /lib/functions/network.sh
+
+	local enabled
+    local proto
+    local interface
+    local ifname
+    local startip
+    local endip
+    local dns1
+    local dns2
+    local leasetime
+	local config_file
+    local wanv6_conn_status
+
+	logger starting dhcp6s
+
+	config_load "dhcp6s"
+	config_get_bool enabled basic enabled 0
+    config_get proto basic proto 'dhcp6s'
+    config_get interface basic interface
+    config_get ifname basic ifname
+    config_get startip basic startip
+    config_get endip basic endip
+    config_get dns1 basic primary_dns
+    config_get dns2 basic secondary_dns
+    config_get leasetime basic leasetime
+	config_get config_file basic config_file
+
+	[ $enabled -eq 0 ] && return 0
+
+	[ ! -e $config_file ] && touch $config_file
+
+    if [ -z "$ifname" ]; then
+        network_get_device ifname "$interface" || return 1
+    fi
+
+    cat /dev/null >$config_file
+    if [ -n "$dns1" -a "$dns1" != "none" ]; then
+        echo -e "option domain-name-servers $dns1;\n" >>$config_file
+    fi
+    if [ -n "$dns2" -a "$dns2" != "none" -a "$dns1" != "$dns2" ]; then
+        echo -e "option domain-name-servers $dns2;\n" >>$config_file
+    fi
+
+    case $proto in
+        dhcp6s)
+            echo -e "pool pool1 {" >>$config_file
+            echo -e "    range $startip to $endip ;" >>$config_file
+            echo -e "};\n" >>$config_file
+            echo -e "interface $ifname {" >>$config_file
+            echo -e "    address-pool pool1 $leasetime;" >>$config_file
+            echo -e "};" >>$config_file
+            ;;
+
+        slaac)
+            # slaac
+            ;;
+
+        *)
+            # Invalid proto
+            return 1
+    esac
+
+    wanv6_conn_status=`ubus call network.interface.wanv6 status | grep "\"state\""`
+    if [ "$wanv6_conn_status"x = ""x ]; then
+        wanv6_conn_status=`ubus call network.interface.internet status | grep "\"state\""`
+    fi
+    wanv6_conn_status=${wanv6_conn_status#*state}
+    wanv6_conn_status=${wanv6_conn_status:4:9}
+    if [ "$wanv6_conn_status"x = "connected"x ]; then
+        echo "Start dhcp6s server."
+
+	if [ "$1"x = "update"x ]; then
+		local dns_flag=$(cat /tmp/dns_flag)
+
+                echo "down off re client" > /dev/console
+		if [ $dns_flag == 1 ]; then
+			echo 0 > /tmp/dns_flag
+			ubus call awn update_dns '{ "dns": 167772162 }'
+		else
+			echo 1 > /tmp/dns_flag
+			ubus call awn update_dns '{ "dns": 167772161 }'
+		fi
+	fi
+
+        /usr/sbin/dhcp6s -c $config_file -P $pid_file $ifname
+    else
+        echo "wanv6_conn_status is not connected, do not start dhcp6s now"
+    fi
+}
+
+stop() {
+	logger stopping dhcp6s
+	service_stop /usr/sbin/dhcp6s
+
+    [ -e $pid_file ] && kill -15 `cat "$pid_file"`
+    [ -e $pid_file ] && rm "$pid_file"
+}
+

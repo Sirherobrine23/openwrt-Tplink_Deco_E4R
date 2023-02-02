@@ -1,0 +1,18 @@
+Source-Makefile: feeds/iplatform/iputils/Makefile
+Package: iputils-ping6
+Submenu: IPv6
+Version: 20101006-1
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +PACKAGE_libopenssl:libopenssl +PACKAGE_libwolfssl:libwolfssl
+Menu-Depends: 
+Provides: 
+Section: ipv6
+Category: TP-LINK iplatform apps
+Title: iputils ping6
+Maintainer: OpenWrt Developers Team <openwrt-devel@openwrt.org>
+Source: 
+Type: ipkg
+Description: 	ping6 is a icmp tool for IPv6.
+OpenWrt Developers Team <openwrt-devel@openwrt.org>
+@@
+
+

@@ -1,0 +1,18 @@
+Source-Makefile: feeds/iplatform/netifd/Makefile
+Package: netifd
+Submenu: Network
+Version: 2013-05-13-bc4a4bb127622c76085ecec7fd20448aad7bafaf
+Depends: +libc +USE_EGLIBC:librt +USE_EGLIBC:libpthread +libuci +libnl-tiny +libubus +ubus +ubusd +jshn +kmod-bonding +OPENAT:libopenat
+Menu-Depends: 
+Provides: 
+Section: base
+Category: TP-LINK iplatform apps
+Title: OpenWrt Network Interface Configuration Daemon
+Maintainer: OpenWrt Developers Team <openwrt-devel@openwrt.org>
+Source: netifd-2013-05-13-bc4a4bb127622c76085ecec7fd20448aad7bafaf.tar.gz
+Type: ipkg
+Description: OpenWrt Network Interface Configuration Daemon
+OpenWrt Developers Team <openwrt-devel@openwrt.org>
+@@
+
+
